@@ -474,6 +474,66 @@
     color: var(--amber);
   }
 
+  /* ── Browser mockup ── */
+  .browser-mockup {
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    background: #0e0e18;
+  }
+
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #111120;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .browser-dots {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .browser-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: block;
+  }
+
+  .browser-dots span:nth-child(1) { background: #ff5f57; }
+  .browser-dots span:nth-child(2) { background: #febc2e; }
+  .browser-dots span:nth-child(3) { background: #28c840; }
+
+  .browser-url {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .browser-screenshot {
+    width: 100%;
+    display: block;
+    height: 220px;
+    object-fit: cover;
+    object-position: top center;
+    transition: height 0.3s ease;
+  }
+
+  .project-card:hover .browser-screenshot {
+    height: 260px;
+  }
+
   /* ── Color accents per project ── */
   .p1 .project-card { border-top: 2px solid var(--cyan); }
   .p1 .project-name { color: var(--cyan); }
@@ -782,6 +842,13 @@
       <div class="project p1 fade-in">
         <div class="project-period">// 2026 Feb mid → Mar 07 · ~3 週</div>
         <div class="project-card">
+          <div class="browser-mockup">
+            <div class="browser-bar">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">https://didipo.com</div>
+            </div>
+            <img class="browser-screenshot" src="screenshots/didipo.png" alt="DiDiPo 網站截圖" loading="lazy">
+          </div>
           <div class="project-header">
             <div class="project-title-wrap">
               <div class="project-index">PROJECT 01</div>
@@ -799,6 +866,7 @@
             <div>
               <div class="col-title">技術棧</div>
               <div class="tech-tags">
+                <span class="tag hl">Lovable</span>
                 <span class="tag hl">React + Vite</span>
                 <span class="tag hl">TypeScript</span>
                 <span class="tag hl">Tailwind</span>
@@ -835,6 +903,13 @@
       <div class="project p2 fade-in delay-1">
         <div class="project-period">// 2026 Mar early → Mar 16 · ~2 週</div>
         <div class="project-card">
+          <div class="browser-mockup">
+            <div class="browser-bar">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">https://iqai-5zv.pages.dev</div>
+            </div>
+            <img class="browser-screenshot" src="screenshots/iqai.png" alt="IQ Suite 網站截圖" loading="lazy">
+          </div>
           <div class="project-header">
             <div class="project-title-wrap">
               <div class="project-index">PROJECT 02</div>
@@ -884,6 +959,13 @@
       <div class="project p3 fade-in delay-2">
         <div class="project-period">// 2026 Mar 18 → Mar 25 · ~1 週</div>
         <div class="project-card">
+          <div class="browser-mockup">
+            <div class="browser-bar">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">https://zerohourtw.com</div>
+            </div>
+            <img class="browser-screenshot" src="screenshots/zerohour.png" alt="零時生存網站截圖" loading="lazy">
+          </div>
           <div class="project-header">
             <div class="project-title-wrap">
               <div class="project-index">PROJECT 03</div>
@@ -935,6 +1017,13 @@
       <div class="project p4 fade-in delay-3">
         <div class="project-period">// 2026 Mar 25 前後 · 1–2 天</div>
         <div class="project-card">
+          <div class="browser-mockup">
+            <div class="browser-bar">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">citablerank.ai · GEO Health Check prototype</div>
+            </div>
+            <img class="browser-screenshot" src="screenshots/citablerank.png" alt="CitableRank 原型截圖" loading="lazy">
+          </div>
           <div class="project-header">
             <div class="project-title-wrap">
               <div class="project-index">PROJECT 04</div>
@@ -952,6 +1041,7 @@
             <div>
               <div class="col-title">技術棧（現在）</div>
               <div class="tech-tags">
+                <span class="tag hl">Lovable</span>
                 <span class="tag hl">單頁 HTML</span>
                 <span class="tag hl">Python proxy</span>
                 <span class="tag">Claude API</span>
@@ -986,7 +1076,7 @@
     </div>
     <div class="stack-row">
       <span class="stack-key">前端框架</span>
-      <span class="stack-val"><code>Vite + React</code><code>TypeScript</code><code>Tailwind CSS</code><code>shadcn/ui</code><code>Framer Motion</code><code>Zustand</code></span>
+      <span class="stack-val"><code>Lovable</code>（DiDiPo / CitableRank 前端）<code>Vite + React</code><code>TypeScript</code><code>Tailwind CSS</code><code>shadcn/ui</code><code>Framer Motion</code><code>Zustand</code></span>
     </div>
     <div class="stack-row">
       <span class="stack-key">後端/資料庫</span>
