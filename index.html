@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30天，4個專案：用 Claude Pro 加速開發的實戰筆記</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070810;
+    --bg2: #0d0f1a;
+    --bg3: #12152a;
+    --line: rgba(255,255,255,0.06);
+    --cyan: #00e5cc;
+    --cyan-dim: rgba(0,229,204,0.15);
+    --amber: #ffb347;
+    --amber-dim: rgba(255,179,71,0.12);
+    --violet: #a78bfa;
+    --violet-dim: rgba(167,139,250,0.12);
+    --red: #ff6b6b;
+    --green: #4fffb0;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --mono: 'Space Mono', monospace;
+    --serif: 'Noto Serif TC', serif;
+    --sans: 'Noto Sans TC', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── Scanline overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.04) 2px,
+      rgba(0,0,0,0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ── Grid bg ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,204,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,204,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Layout ── */
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 100px 0 80px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--cyan);
+    display: inline-block;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--cyan);
+    position: relative;
+  }
+
+  .hero h1 em::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--cyan);
+    opacity: 0.4;
+  }
+
+  .hero-sub {
+    font-family: var(--sans);
+    font-size: 16px;
+    color: var(--text-dim);
+    max-width: 560px;
+    line-height: 1.9;
+    margin-bottom: 40px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .meta-value {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--amber);
+  }
+
+  /* ── Stats bar ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    margin: 48px 0;
+    overflow: hidden;
+  }
+
+  .stat {
+    padding: 24px 20px;
+    border-right: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .stat:nth-child(1)::before { background: var(--cyan); }
+  .stat:nth-child(2)::before { background: var(--amber); }
+  .stat:nth-child(3)::before { background: var(--violet); }
+  .stat:nth-child(4)::before { background: var(--green); }
+
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat:nth-child(1) .stat-num { color: var(--cyan); }
+  .stat:nth-child(2) .stat-num { color: var(--amber); }
+  .stat:nth-child(3) .stat-num { color: var(--violet); }
+  .stat:nth-child(4) .stat-num { color: var(--green); }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Section header ── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ── Timeline ── */
+  .timeline {
+    position: relative;
+    padding: 60px 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--cyan) 10%, var(--cyan) 90%, transparent);
+    opacity: 0.3;
+  }
+
+  /* ── Project Card ── */
+  .project {
+    padding: 0 0 64px 40px;
+    position: relative;
+  }
+
+  .project::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    background: var(--bg);
+  }
+
+  .project-period {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .project-card {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .project-card:hover {
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .project-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .project-title-wrap { flex: 1; }
+
+  .project-index {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+  }
+
+  .project-name {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .project-en {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .project-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .badge-large {
+    background: rgba(255,107,107,0.12);
+    border: 1px solid rgba(255,107,107,0.3);
+    color: #ff6b6b;
+  }
+
+  .badge-medium {
+    background: rgba(255,179,71,0.12);
+    border: 1px solid rgba(255,179,71,0.3);
+    color: var(--amber);
+  }
+
+  .badge-proto {
+    background: rgba(167,139,250,0.12);
+    border: 1px solid rgba(167,139,250,0.3);
+    color: var(--violet);
+  }
+
+  .project-body {
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .project-desc {
+    grid-column: 1 / -1;
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.85;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .col-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .tag.hl {
+    border-color: rgba(0,229,204,0.3);
+    color: var(--cyan);
+    background: rgba(0,229,204,0.05);
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .feature-list li {
+    font-size: 13px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.6;
+  }
+
+  .feature-list li::before {
+    content: '▸';
+    color: var(--cyan);
+    opacity: 0.5;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 11px;
+  }
+
+  .project-footer {
+    padding: 16px 28px;
+    background: rgba(255,255,255,0.015);
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .project-url {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: color 0.15s;
+  }
+
+  .project-url:hover { color: var(--cyan); }
+
+  .project-duration {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .project-duration span {
+    color: var(--amber);
+  }
+
+  /* ── Color accents per project ── */
+  .p1 .project-card { border-top: 2px solid var(--cyan); }
+  .p1 .project-name { color: var(--cyan); }
+  .p1 .feature-list li::before { color: var(--cyan); }
+
+  .p2 .project-card { border-top: 2px solid var(--amber); }
+  .p2 .project-name { color: var(--amber); }
+  .p2 .feature-list li::before { color: var(--amber); }
+  .p2 .tag.hl { border-color: rgba(255,179,71,0.4); color: var(--amber); background: rgba(255,179,71,0.06); }
+
+  .p3 .project-card { border-top: 2px solid var(--green); }
+  .p3 .project-name { color: var(--green); }
+  .p3 .feature-list li::before { color: var(--green); }
+  .p3 .tag.hl { border-color: rgba(79,255,176,0.4); color: var(--green); background: rgba(79,255,176,0.06); }
+
+  .p4 .project-card { border-top: 2px solid var(--violet); }
+  .p4 .project-name { color: var(--violet); }
+  .p4 .feature-list li::before { color: var(--violet); }
+  .p4 .tag.hl { border-color: rgba(167,139,250,0.4); color: var(--violet); background: rgba(167,139,250,0.06); }
+
+  /* ── Insights Section ── */
+  .insights {
+    padding: 60px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .insight-card {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px;
+    background: rgba(255,255,255,0.015);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .insight-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .insight-card:nth-child(1)::before { background: var(--cyan); }
+  .insight-card:nth-child(2)::before { background: var(--amber); }
+  .insight-card:nth-child(3)::before { background: var(--violet); }
+  .insight-card:nth-child(4)::before { background: var(--green); }
+
+  .insight-icon {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .insight-title {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .insight-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.85;
+  }
+
+  /* ── Reflections ── */
+  .reflections {
+    padding: 60px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .reflection-block {
+    border-left: 2px solid var(--cyan);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    background: rgba(0,229,204,0.03);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .reflection-block.amber {
+    border-color: var(--amber);
+    background: rgba(255,179,71,0.03);
+  }
+
+  .reflection-block.violet {
+    border-color: var(--violet);
+    background: rgba(167,139,250,0.03);
+  }
+
+  .reflection-q {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .reflection-block.amber .reflection-q { color: var(--amber); }
+  .reflection-block.violet .reflection-q { color: var(--violet); }
+
+  .reflection-text {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 2;
+    color: var(--text-dim);
+  }
+
+  .reflection-text strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ── Closing ── */
+  .closing {
+    padding: 80px 0;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .closing-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+
+  .closing-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+    line-height: 1.9;
+  }
+
+  .sig {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    border: 1px solid var(--line);
+    padding: 12px 24px;
+    border-radius: 2px;
+  }
+
+  .sig span {
+    color: var(--cyan);
+  }
+
+  /* ── Terminal prompt blink ── */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--cyan);
+    vertical-align: middle;
+    margin-left: 2px;
+    animation: blink 1.1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* ── Stack summary ── */
+  .stack-summary {
+    padding: 40px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .stack-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stack-key {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    width: 120px;
+    flex-shrink: 0;
+  }
+
+  .stack-val {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .stack-val code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--cyan);
+    background: rgba(0,229,204,0.07);
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin: 0 2px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .project-body { grid-template-columns: 1fr; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .hero-meta { gap: 20px; }
+    .stat-num { font-size: 24px; }
+  }
+
+  /* ── Fade-in ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger delays */
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.3s; }
+  .delay-4 { transition-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ── HERO ── -->
+  <header class="hero">
+    <div class="hero-tag">DEV LOG · 2026</div>
+    <h1>30天，<em>4個專案</em><br>用 Claude Pro 加速開發的實戰筆記</h1>
+    <p class="hero-sub">
+      一個月，從零到上線。記錄我如何用 AI 協作，在不是「全職工程師」的條件下，
+      完成過去可能要半年才能做完的東西。
+    </p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">開發期間</span>
+        <span class="meta-value">~30天</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">完成專案</span>
+        <span class="meta-value">4個</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">上線產品</span>
+        <span class="meta-value">3個</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">使用工具</span>
+        <span class="meta-value">Claude<span class="cursor"></span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── STATS ── -->
+  <div class="stats fade-in">
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">已上線網站</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10+</div>
+      <div class="stat-label">串接 API 數</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">6</div>
+      <div class="stat-label">AI 模型整合</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">對話 Token</div>
+    </div>
+  </div>
+
+  <!-- ── TIMELINE ── -->
+  <section>
+    <div class="section-header fade-in">
+      <span class="section-num">01</span>
+      <h2 class="section-title">開發時間軸</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="timeline">
+
+      <!-- Project 1: DiDiPo -->
+      <div class="project p1 fade-in">
+        <div class="project-period">// 2026 Feb mid → Mar 07 · ~3 週</div>
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-title-wrap">
+              <div class="project-index">PROJECT 01</div>
+              <div class="project-name">DiDiPo</div>
+              <div class="project-en">AI 社群媒體自動發文 SaaS</div>
+            </div>
+            <span class="project-badge badge-large">大型專案</span>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">
+              幫社群行銷人員一鍵生成 AI 文案並自動排程發佈至 Facebook、Instagram、Threads。
+              串接三家 AI 廠商的六個模型，支援系列文章自動生成大綱→逐篇生成配圖的完整流程。
+              這是我目前做過規模最大的一個 SaaS，幾乎每個主流功能都有。
+            </p>
+            <div>
+              <div class="col-title">技術棧</div>
+              <div class="tech-tags">
+                <span class="tag hl">React + Vite</span>
+                <span class="tag hl">TypeScript</span>
+                <span class="tag hl">Tailwind</span>
+                <span class="tag hl">Supabase</span>
+                <span class="tag">shadcn/ui</span>
+                <span class="tag">OpenAI API</span>
+                <span class="tag">Claude API</span>
+                <span class="tag">Gemini API</span>
+                <span class="tag">Google Imagen 4</span>
+                <span class="tag">Meta Graph API</span>
+                <span class="tag">Cloudflare Pages</span>
+              </div>
+            </div>
+            <div>
+              <div class="col-title">完成功能</div>
+              <ul class="feature-list">
+                <li>6 個 AI 模型文案生成（OpenAI / Claude / Gemini）</li>
+                <li>AI 圖片生成 + 智能解析文案提取圖像描述</li>
+                <li>系列文章：大綱→逐篇生成→排程</li>
+                <li>排程日曆（可編輯、可刪除、配圖預覽）</li>
+                <li>Google / FB / IG / Threads OAuth 串接</li>
+                <li>推薦碼系統、訂閱方案定價頁</li>
+              </ul>
+            </div>
+          </div>
+          <div class="project-footer">
+            <a class="project-url" href="#">didipo.com</a>
+            <span class="project-duration">開發時程：<span>約 3 週</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2: IQ Suite -->
+      <div class="project p2 fade-in delay-1">
+        <div class="project-period">// 2026 Mar early → Mar 16 · ~2 週</div>
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-title-wrap">
+              <div class="project-index">PROJECT 02</div>
+              <div class="project-name">IQ Suite</div>
+              <div class="project-en">多主題智力測驗平台</div>
+            </div>
+            <span class="project-badge badge-medium">中型專案</span>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">
+              涵蓋 AI 智商、財商、情商、領導力、社群行銷力、戶外安全力共六種測驗的線上平台。
+              每個測驗都有完整的加權計分引擎與付費深度報告，並支援 Facebook 動態 OG 分享，
+              讓用戶可以分享「我的 AIIQ 超越了 88% 的受測者」這類社群卡片。
+            </p>
+            <div>
+              <div class="col-title">技術棧</div>
+              <div class="tech-tags">
+                <span class="tag hl">React + Vite</span>
+                <span class="tag hl">TypeScript</span>
+                <span class="tag hl">Supabase</span>
+                <span class="tag">Cloudflare Pages</span>
+                <span class="tag">Lemon Squeezy</span>
+                <span class="tag">Cloudflare Functions</span>
+                <span class="tag">Python DOCX parser</span>
+              </div>
+            </div>
+            <div>
+              <div class="col-title">完成功能</div>
+              <ul class="feature-list">
+                <li>6 種測驗（AIIQ / FQ / EQ / LQ / SMQ / OSQ）</li>
+                <li>加權計分 + 百分位 + 人格類型判斷</li>
+                <li>付費深度報告（6 份）</li>
+                <li>Email + Google OAuth 登入、歷史紀錄</li>
+                <li>動態 OG tags 社群分享卡片</li>
+                <li>Python 規格書（DOCX）自動轉 TypeScript</li>
+              </ul>
+            </div>
+          </div>
+          <div class="project-footer">
+            <a class="project-url" href="#">iqai-5zv.pages.dev</a>
+            <span class="project-duration">開發時程：<span>約 2 週</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3: ZERO HOUR -->
+      <div class="project p3 fade-in delay-2">
+        <div class="project-period">// 2026 Mar 18 → Mar 25 · ~1 週</div>
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-title-wrap">
+              <div class="project-index">PROJECT 03</div>
+              <div class="project-name">零時生存 ZERO HOUR</div>
+              <div class="project-en">台灣災難應變情境問答遊戲</div>
+            </div>
+            <span class="project-badge badge-medium">中型專案</span>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">
+              以台灣常見災難情境為主題的教育型問答遊戲：地震、海嘯、戰爭、異常天候、恐怖攻擊、疫情、不明生物，共 7 大情境 159 題。
+              玩完後有 S/A/B/C/D/F 評級與完整生存報告，付費解鎖 PDF 下載。
+              這是這段期間開發速度最快的專案，一週內從零到金流全部上線。
+            </p>
+            <div>
+              <div class="col-title">技術棧</div>
+              <div class="tech-tags">
+                <span class="tag hl">React + Vite</span>
+                <span class="tag hl">Zustand</span>
+                <span class="tag hl">Framer Motion</span>
+                <span class="tag">Tailwind v3</span>
+                <span class="tag">Supabase</span>
+                <span class="tag">Lemon Squeezy</span>
+                <span class="tag">Google Imagen 4</span>
+                <span class="tag">Cloudflare Pages</span>
+              </div>
+            </div>
+            <div>
+              <div class="col-title">完成功能</div>
+              <ul class="feature-list">
+                <li>7 大情境 159 題含分支邏輯 + 評級系統</li>
+                <li>動態倒數計時器（依題目字數自動調整）</li>
+                <li>人物側寫問卷（9 題 + 隨機生成角色）</li>
+                <li>結果分享（Facebook / IG / Threads / 下載）</li>
+                <li>付費 PDF 報告（Lemon Squeezy 金流串接完成）</li>
+                <li>許願池社群功能（按讚、管理員刪除）</li>
+                <li>所有配圖用 Google Imagen 4 生成（90+ 張）</li>
+              </ul>
+            </div>
+          </div>
+          <div class="project-footer">
+            <a class="project-url" href="#">zerohourtw.com</a>
+            <span class="project-duration">開發時程：<span>約 1 週</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 4: CitableRank -->
+      <div class="project p4 fade-in delay-3">
+        <div class="project-period">// 2026 Mar 25 前後 · 1–2 天</div>
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-title-wrap">
+              <div class="project-index">PROJECT 04</div>
+              <div class="project-name">CitableRank · AI讚聲</div>
+              <div class="project-en">AI 搜尋能見度分析工具</div>
+            </div>
+            <span class="project-badge badge-proto">原型階段</span>
+          </div>
+          <div class="project-body">
+            <p class="project-desc">
+              台灣第一個繁體中文 GEO（Generative Engine Optimization）分析工具。
+              幫企業/品牌分析自己在 ChatGPT、Claude、Gemini 被推薦的狀況，提供「讚聲分數」與改善建議。
+              「讚聲」來自台語，意思是有人幫你說好話、幫你背書——這正是 AI 時代品牌需要的能力。
+            </p>
+            <div>
+              <div class="col-title">技術棧（現在）</div>
+              <div class="tech-tags">
+                <span class="tag hl">單頁 HTML</span>
+                <span class="tag hl">Python proxy</span>
+                <span class="tag">Claude API</span>
+              </div>
+            </div>
+            <div>
+              <div class="col-title">規劃 SaaS 版</div>
+              <ul class="feature-list">
+                <li>多 LLM 並測（Claude + GPT + Gemini + Perplexity）</li>
+                <li>競爭對手追蹤 + 讚聲地圖</li>
+                <li>AI 自動生成建議問題</li>
+                <li>技術棧：Next.js 14 + Supabase + Clerk + Stripe</li>
+              </ul>
+            </div>
+          </div>
+          <div class="project-footer">
+            <a class="project-url" href="#">citablerank.ai</a>
+            <span class="project-duration">定價：<span>Free / NT$599 / NT$1,499 / VIP</span></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── STACK SUMMARY ── -->
+  <section class="stack-summary fade-in">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">這個月用到的技術全覽</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="stack-row">
+      <span class="stack-key">前端框架</span>
+      <span class="stack-val"><code>Vite + React</code><code>TypeScript</code><code>Tailwind CSS</code><code>shadcn/ui</code><code>Framer Motion</code><code>Zustand</code></span>
+    </div>
+    <div class="stack-row">
+      <span class="stack-key">後端/資料庫</span>
+      <span class="stack-val"><code>Supabase</code>（PostgreSQL + Auth + Edge Functions + RLS）</span>
+    </div>
+    <div class="stack-row">
+      <span class="stack-key">部署</span>
+      <span class="stack-val"><code>Cloudflare Pages</code><code>Cloudflare Pages Functions</code>，3 個自訂網域</span>
+    </div>
+    <div class="stack-row">
+      <span class="stack-key">AI 模型</span>
+      <span class="stack-val"><code>Claude Haiku / Sonnet</code><code>GPT-4o mini</code><code>Gemini 2.5 Flash</code><code>Google Imagen 4</code></span>
+    </div>
+    <div class="stack-row">
+      <span class="stack-key">第三方 API</span>
+      <span class="stack-val"><code>Meta Graph API</code><code>Threads API</code><code>Google OAuth</code><code>Lemon Squeezy</code></span>
+    </div>
+    <div class="stack-row">
+      <span class="stack-key">開發協作</span>
+      <span class="stack-val"><code>Claude Code</code>（主要 coding 夥伴）、<code>GitHub</code>、<code>Supabase CLI</code></span>
+    </div>
+  </section>
+
+  <!-- ── INSIGHTS ── -->
+  <section class="insights fade-in">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">這個月學到的事</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-icon">⚡</div>
+        <div class="insight-title">AI 加速的不是打字，是決策</div>
+        <div class="insight-text">
+          以前卡關是因為不知道怎麼實作。現在卡關通常是因為沒想清楚要做什麼。
+          Claude 幫我把「模糊需求」變成「可執行步驟」的速度，遠比我自己想快得多。
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon">🧱</div>
+        <div class="insight-title">規格書寫得好，程式碼就對</div>
+        <div class="insight-text">
+          每個專案開始前花 30 分鐘把功能邊界、資料結構、API 格式寫清楚，
+          後續 AI 生成的程式碼幾乎不需要大改。垃圾進垃圾出，這在 AI 時代更明顯。
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon">🔁</div>
+        <div class="insight-title">記憶系統是長期開發的關鍵</div>
+        <div class="insight-text">
+          Claude Code 的專案記憶讓我每次開新對話都不需要重新解釋架構。
+          這個設計讓跨天、跨週開發同一專案的成本大幅降低。
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon">🎯</div>
+        <div class="insight-title">「能上線」比「夠完美」更有價值</div>
+        <div class="insight-text">
+          零時生存一週從零到金流上線，關鍵是每天只問一個問題：
+          「今天最重要的一件事是什麼？」功能可以迭代，上線時機不能等。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── REFLECTIONS ── -->
+  <section class="reflections fade-in">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">開發心得</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-q">// 關於 AI 協作</div>
+      <div class="reflection-text">
+        我不是傳統意義上的全職工程師。但這個月我完成了過去可能要半年的工程量。
+        <strong>Claude 幫我填補的不是「不會寫程式」的缺口，而是「一個人做不完」的缺口。</strong>
+        它像是一個永遠在線、永遠有耐心、永遠記得你昨天說了什麼的資深工程師。
+      </div>
+    </div>
+
+    <div class="reflection-block amber">
+      <div class="reflection-q">// 關於速度與品質</div>
+      <div class="reflection-text">
+        快速不代表粗糙。<strong>DiDiPo 有完整的 OAuth 流程、IQ Suite 有嚴謹的計分引擎、
+        零時生存有 159 題含分支邏輯</strong>——這些不是將就的作品。
+        AI 協作讓我可以在維持品質的同時，把交付速度提高 3–5 倍。
+      </div>
+    </div>
+
+    <div class="reflection-block violet">
+      <div class="reflection-q">// 關於接下來</div>
+      <div class="reflection-text">
+        CitableRank 是這個月最後誕生的想法，也可能是最有商業潛力的一個。
+        <strong>GEO（AI 搜尋優化）是 SEO 之後下一個十年的戰場</strong>，台灣還沒有人在做繁體中文的工具。
+        這個賽道，我想認真跑。
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CLOSING ── -->
+  <section class="closing fade-in">
+    <div class="closing-title">一個月，只是開始。</div>
+    <p class="closing-sub">
+      這四個專案都還在成長。<br>
+      如果你對其中任何一個有興趣，歡迎來聊。
+    </p>
+    <div class="sig">
+      Written with <span>Claude Code</span> · 2026
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Trigger visible for elements already in view
+  setTimeout(() => {
+    document.querySelectorAll('.fade-in').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.classList.add('visible');
+      }
+    });
+  }, 100);
+</script>
+
+</body>
+</html>
