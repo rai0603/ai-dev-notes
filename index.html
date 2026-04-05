@@ -415,7 +415,17 @@
     font-weight: 700;
     border-bottom: 1.5px solid var(--gold);
     padding-bottom: 1px;
+    transition: color 0.15s;
   }
+
+  .project-url:hover { color: var(--black); }
+
+  .browser-url a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .browser-url a:hover { text-decoration: underline; }
 
   .project-duration {
     font-family: var(--mono);
@@ -676,7 +686,7 @@
           <div class="browser-mockup">
             <div class="browser-bar">
               <div class="browser-dots"><span></span><span></span><span></span></div>
-              <div class="browser-url">https://didipo.com</div>
+              <div class="browser-url"><a href="https://didipo.com" target="_blank" rel="noopener">https://didipo.com</a></div>
             </div>
             <img class="browser-screenshot" src="screenshots/didipo.png" alt="DiDiPo" loading="lazy">
           </div>
@@ -724,7 +734,7 @@
             </div>
           </div>
           <div class="project-footer">
-            <span class="project-url">didipo.com</span>
+            <a class="project-url" href="https://didipo.com" target="_blank" rel="noopener">didipo.com ↗</a>
             <span class="project-duration">開發時程：<strong>約 3 週</strong></span>
           </div>
         </div>
@@ -738,7 +748,7 @@
           <div class="browser-mockup">
             <div class="browser-bar">
               <div class="browser-dots"><span></span><span></span><span></span></div>
-              <div class="browser-url">https://iqai-5zv.pages.dev</div>
+              <div class="browser-url"><a href="https://iqai-5zv.pages.dev" target="_blank" rel="noopener">https://iqai-5zv.pages.dev</a></div>
             </div>
             <img class="browser-screenshot" src="screenshots/iqai.png" alt="IQ Suite" loading="lazy">
           </div>
@@ -781,7 +791,7 @@
             </div>
           </div>
           <div class="project-footer">
-            <span class="project-url">iqai-5zv.pages.dev</span>
+            <a class="project-url" href="https://iqai-5zv.pages.dev" target="_blank" rel="noopener">iqai-5zv.pages.dev ↗</a>
             <span class="project-duration">開發時程：<strong>約 2 週</strong></span>
           </div>
         </div>
@@ -795,7 +805,7 @@
           <div class="browser-mockup">
             <div class="browser-bar">
               <div class="browser-dots"><span></span><span></span><span></span></div>
-              <div class="browser-url">https://zerohourtw.com</div>
+              <div class="browser-url"><a href="https://zerohourtw.com" target="_blank" rel="noopener">https://zerohourtw.com</a></div>
             </div>
             <img class="browser-screenshot" src="screenshots/zerohour.png" alt="零時生存" loading="lazy">
           </div>
@@ -839,7 +849,7 @@
             </div>
           </div>
           <div class="project-footer">
-            <span class="project-url">zerohourtw.com</span>
+            <a class="project-url" href="https://zerohourtw.com" target="_blank" rel="noopener">zerohourtw.com ↗</a>
             <span class="project-duration">開發時程：<strong>約 1 週</strong></span>
           </div>
         </div>
@@ -853,7 +863,7 @@
           <div class="browser-mockup">
             <div class="browser-bar">
               <div class="browser-dots"><span></span><span></span><span></span></div>
-              <div class="browser-url">citablerank.ai · GEO Health Check prototype</div>
+              <div class="browser-url"><a href="https://citablerank.com" target="_blank" rel="noopener">https://citablerank.com</a></div>
             </div>
             <img class="browser-screenshot" src="screenshots/citablerank.png" alt="CitableRank" loading="lazy">
           </div>
@@ -891,7 +901,7 @@
             </div>
           </div>
           <div class="project-footer">
-            <span class="project-url">citablerank.ai</span>
+            <a class="project-url" href="https://citablerank.com" target="_blank" rel="noopener">citablerank.com ↗</a>
             <span class="project-duration">定價：<strong>Free / NT$599 / NT$1,499</strong></span>
           </div>
         </div>
