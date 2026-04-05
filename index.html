@@ -3,678 +3,434 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>30天，4個專案：用 Claude Pro 加速開發的實戰筆記</title>
+<title>我不會寫程式，但我用 Claude Code 在 30 天內上線了 3 個產品</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --gold: #FFC920;
-    --gold-light: #FFF3C4;
+    --gold-light: #FFF8DC;
+    --gold-border: #e5c800;
     --black: #111111;
     --charcoal: #3a3a3a;
     --gray: #555555;
+    --gray-mid: #888;
     --gray-light: #f7f7f7;
     --border: #e8e8e8;
     --white: #ffffff;
+    --cyan: #00b8a0;
+    --red: #e53935;
+    --green: #2e7d32;
     --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
     --mono: 'Space Mono', monospace;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+  body { background: var(--white); color: var(--black); font-family: var(--sans); font-size: 16px; line-height: 1.8; }
 
-  body {
-    background: var(--white);
-    color: var(--black);
-    font-family: var(--sans);
-    font-size: 16px;
-    line-height: 1.8;
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── Sections ── */
+  .s-white  { background: var(--white); padding: 72px 0; }
+  .s-gray   { background: var(--gray-light); padding: 72px 0; }
+  .s-black  { background: var(--black); padding: 72px 0; color: var(--white); }
+  .s-gold   { background: var(--gold); padding: 56px 0; }
+  .divider  { height: 2px; background: var(--black); }
+
+  /* ── Section labels ── */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.2em; color: var(--gray); margin-bottom: 12px; text-transform: uppercase;
   }
+  .eyebrow::before { content: ''; display: inline-block; width: 20px; height: 2px; background: var(--gold); }
+  .s-black .eyebrow { color: #777; }
+  .s-black .eyebrow::before { background: var(--gold); }
 
-  /* ── Utils ── */
-  .wrap {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 32px;
-  }
-
-  .gold { color: var(--gold); }
-  .gold-bg { background: var(--gold); }
+  .sec-title { font-size: 28px; font-weight: 900; line-height: 1.3; margin-bottom: 8px; }
+  .sec-sub   { font-size: 15px; color: var(--gray); margin-bottom: 40px; line-height: 1.7; }
+  .s-black .sec-title { color: var(--white); }
+  .s-black .sec-sub   { color: #999; }
 
   /* ── Hero ── */
-  .hero {
-    background: var(--white);
-    padding: 72px 0 64px;
-    border-bottom: 2px solid var(--black);
+  .hero { background: var(--white); padding: 72px 0 64px; border-bottom: 2px solid var(--black); }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--black); color: var(--gold);
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.15em; padding: 6px 14px; border-radius: 4px; margin-bottom: 28px;
   }
-
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--black);
-    color: var(--gold);
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    padding: 6px 14px;
-    border-radius: 4px;
-    margin-bottom: 28px;
-  }
-
   .hero h1 {
-    font-family: var(--sans);
-    font-size: clamp(32px, 5.5vw, 56px);
-    font-weight: 900;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    margin-bottom: 20px;
-    color: var(--black);
+    font-size: clamp(28px, 5vw, 52px); font-weight: 900; line-height: 1.2;
+    letter-spacing: -0.02em; margin-bottom: 20px;
   }
-
-  .hero h1 mark {
-    background: var(--gold);
-    color: var(--black);
-    padding: 0 6px;
-    border-radius: 3px;
-  }
-
-  .hero-sub {
-    font-size: 17px;
-    color: var(--gray);
-    line-height: 1.9;
-    max-width: 600px;
-    margin-bottom: 44px;
-  }
+  .hero h1 mark { background: var(--gold); color: var(--black); padding: 0 6px; border-radius: 3px; font-style: normal; }
+  .hero-sub { font-size: 16px; color: var(--gray); line-height: 1.9; max-width: 640px; margin-bottom: 44px; }
 
   .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    border: 2px solid var(--black);
-    border-radius: 12px;
-    overflow: hidden;
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    border: 2px solid var(--black); border-radius: 12px; overflow: hidden;
   }
-
-  .hstat {
-    padding: 24px 20px;
-    border-right: 2px solid var(--black);
-    background: var(--white);
-    text-align: center;
-  }
-
+  .hstat { padding: 20px 16px; border-right: 2px solid var(--black); text-align: center; }
   .hstat:last-child { border-right: none; }
+  .hstat-num { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 5px; color: var(--black); }
+  .hstat:nth-child(1) .hstat-num,
+  .hstat:nth-child(5) .hstat-num { color: var(--gold); -webkit-text-stroke: 1px var(--black); }
+  .hstat-label { font-size: 11px; color: var(--gray); font-weight: 500; }
 
-  .hstat-num {
-    font-size: 36px;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 6px;
-    color: var(--black);
-  }
-
-  .hstat:nth-child(1) .hstat-num { color: var(--gold); -webkit-text-stroke: 1px var(--black); }
-  .hstat:nth-child(2) .hstat-num { color: var(--black); }
-  .hstat:nth-child(3) .hstat-num { color: var(--black); }
-  .hstat:nth-child(4) .hstat-num { color: var(--gold); -webkit-text-stroke: 1px var(--black); }
-
-  .hstat-label {
-    font-size: 12px;
-    color: var(--gray);
-    font-weight: 500;
-  }
-
-  /* ── Section wrapper ── */
-  .section-light { background: var(--white); padding: 72px 0; }
-  .section-gray  { background: var(--gray-light); padding: 72px 0; }
-  .section-dark  { background: var(--black); padding: 72px 0; color: var(--white); }
-
-  /* ── Section header ── */
-  .section-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    color: var(--gray);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-  }
-
-  .section-label::before {
-    content: '';
-    display: inline-block;
-    width: 20px;
-    height: 2px;
-    background: var(--gold);
-  }
-
-  .section-title {
-    font-size: 28px;
-    font-weight: 900;
-    line-height: 1.3;
+  /* ── Author ── */
+  .author-block {
+    display: flex; gap: 32px; align-items: flex-start;
+    border: 2px solid var(--black); border-radius: 12px; padding: 32px; background: var(--white);
     margin-bottom: 40px;
-    color: var(--black);
   }
-
-  .section-dark .section-title { color: var(--white); }
-  .section-dark .section-label { color: #999; }
-
-  /* ── Timeline ── */
-  .timeline {
-    position: relative;
+  .author-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--gold); border: 3px solid var(--black);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; flex-shrink: 0;
   }
+  .author-name { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+  .author-role { font-size: 13px; color: var(--gray); margin-bottom: 12px; font-family: var(--mono); }
+  .author-bio { font-size: 14px; color: var(--charcoal); line-height: 1.85; }
+  .author-bio strong { color: var(--black); font-weight: 700; }
 
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 16px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--border);
+  /* ── Quote block ── */
+  .quote-block {
+    border-left: 4px solid var(--gold); padding: 20px 24px;
+    background: var(--gold-light); border-radius: 0 8px 8px 0; margin: 24px 0;
   }
+  .quote-text { font-size: 16px; font-weight: 700; line-height: 1.8; color: var(--black); }
+  .quote-attr { font-size: 12px; color: var(--gray); margin-top: 8px; font-family: var(--mono); }
+  .s-black .quote-block { background: rgba(255,201,32,0.1); border-color: var(--gold); }
+  .s-black .quote-text { color: var(--white); }
+  .s-black .quote-attr { color: #999; }
 
-  .project {
-    padding-left: 56px;
-    padding-bottom: 48px;
-    position: relative;
-  }
+  /* ── Vibe vs AI table ── */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 2px solid var(--black); border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+  .compare-col { padding: 24px; }
+  .compare-col:first-child { border-right: 2px solid var(--black); background: var(--gray-light); }
+  .compare-col:last-child { background: var(--gold-light); }
+  .compare-label { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px; }
+  .compare-col:first-child .compare-label { color: var(--gray); }
+  .compare-col:last-child .compare-label { color: #7a6000; }
+  .compare-title { font-size: 15px; font-weight: 900; margin-bottom: 10px; }
+  .compare-text { font-size: 13px; color: var(--charcoal); line-height: 1.8; }
+  .compare-note { font-size: 12px; color: var(--gray); margin-top: 8px; font-style: italic; }
 
-  .project:last-child { padding-bottom: 0; }
-
-  .project-dot {
-    position: absolute;
-    left: 6px;
-    top: 20px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--gold);
-    border: 3px solid var(--black);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--black);
-    z-index: 1;
-  }
-
-  .project-period {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gray);
-    letter-spacing: 0.1em;
-    margin-bottom: 14px;
-  }
-
-  /* ── Project Card ── */
-  .project-card {
-    border: 2px solid var(--black);
-    border-radius: 14px;
-    overflow: hidden;
-    background: var(--white);
+  /* ── 3 things ── */
+  .three-grid { display: flex; flex-direction: column; gap: 16px; }
+  .thing-card {
+    display: flex; gap: 20px; align-items: flex-start;
+    border: 2px solid var(--black); border-radius: 12px; padding: 24px; background: var(--white);
     transition: box-shadow 0.2s;
   }
-
-  .project-card:hover {
-    box-shadow: 6px 6px 0 var(--black);
+  .thing-card:hover { box-shadow: 4px 4px 0 var(--black); }
+  .thing-num {
+    width: 40px; height: 40px; background: var(--gold); border: 2px solid var(--black);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px; flex-shrink: 0; color: var(--black);
   }
+  .thing-title { font-size: 16px; font-weight: 900; margin-bottom: 6px; }
+  .thing-text { font-size: 14px; color: var(--charcoal); line-height: 1.8; }
+  .thing-text strong { color: var(--black); font-weight: 700; }
 
-  /* ── Browser mockup ── */
-  .browser-mockup {
-    border-bottom: 2px solid var(--black);
-    overflow: hidden;
-    background: #f0f0f0;
+  /* ── Timeline ── */
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 16px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .project { padding-left: 56px; padding-bottom: 48px; position: relative; }
+  .project:last-child { padding-bottom: 0; }
+  .project-dot {
+    position: absolute; left: 6px; top: 20px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--gold); border: 3px solid var(--black);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--black); z-index: 1;
   }
+  .project-period { font-family: var(--mono); font-size: 11px; color: var(--gray); letter-spacing: 0.1em; margin-bottom: 14px; }
 
-  .browser-bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 14px;
-    background: #e8e8e8;
-    border-bottom: 1px solid #d0d0d0;
-  }
+  /* ── Project card ── */
+  .project-card { border: 2px solid var(--black); border-radius: 14px; overflow: hidden; background: var(--white); transition: box-shadow 0.2s; }
+  .project-card:hover { box-shadow: 6px 6px 0 var(--black); }
 
+  .browser-mockup { border-bottom: 2px solid var(--black); overflow: hidden; background: #f0f0f0; }
+  .browser-bar { display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: #e8e8e8; border-bottom: 1px solid #d0d0d0; }
   .browser-dots { display: flex; gap: 6px; }
-  .browser-dots span {
-    width: 10px; height: 10px;
-    border-radius: 50%; display: block;
-  }
+  .browser-dots span { width: 10px; height: 10px; border-radius: 50%; display: block; }
   .browser-dots span:nth-child(1) { background: #ff5f57; }
   .browser-dots span:nth-child(2) { background: #febc2e; }
   .browser-dots span:nth-child(3) { background: #28c840; }
+  .browser-url { flex: 1; background: var(--white); border: 1px solid #d0d0d0; border-radius: 4px; padding: 3px 10px; font-family: var(--mono); font-size: 11px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .browser-url a { color: inherit; text-decoration: none; }
+  .browser-url a:hover { text-decoration: underline; }
+  .browser-screenshot { width: 100%; display: block; height: 200px; object-fit: cover; object-position: top center; transition: height 0.3s ease; }
+  .project-card:hover .browser-screenshot { height: 240px; }
 
-  .browser-url {
-    flex: 1;
-    background: var(--white);
-    border: 1px solid #d0d0d0;
-    border-radius: 4px;
-    padding: 3px 10px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: #666;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .project-header { padding: 22px 26px 16px; border-bottom: 2px solid var(--black); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .project-index { font-family: var(--mono); font-size: 10px; color: var(--gray); letter-spacing: 0.2em; margin-bottom: 5px; }
+  .project-name { font-size: 20px; font-weight: 900; color: var(--black); margin-bottom: 2px; }
+  .project-desc-short { font-size: 13px; color: var(--gray); }
 
-  .browser-screenshot {
-    width: 100%;
-    display: block;
-    height: 220px;
-    object-fit: cover;
-    object-position: top center;
-    transition: height 0.3s ease;
-  }
-
-  .project-card:hover .browser-screenshot { height: 260px; }
-
-  /* ── Project header ── */
-  .project-header {
-    padding: 24px 28px 18px;
-    border-bottom: 2px solid var(--black);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .project-index {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--gray);
-    letter-spacing: 0.2em;
-    margin-bottom: 6px;
-  }
-
-  .project-name {
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--black);
-    margin-bottom: 3px;
-  }
-
-  .project-desc-short {
-    font-size: 13px;
-    color: var(--gray);
-    font-weight: 400;
-  }
-
-  /* ── Scale badge ── */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
-    flex-shrink: 0;
-    border: 2px solid var(--black);
-  }
-
+  .badge { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; white-space: nowrap; flex-shrink: 0; border: 2px solid var(--black); }
   .badge-large  { background: var(--black); color: var(--gold); }
   .badge-medium { background: var(--gold); color: var(--black); }
   .badge-proto  { background: var(--white); color: var(--black); }
 
-  /* ── Project body ── */
-  .project-body {
-    padding: 24px 28px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
+  .project-body { padding: 22px 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .project-about { grid-column: 1 / -1; font-size: 14px; color: var(--charcoal); line-height: 1.9; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .project-about strong { color: var(--black); font-weight: 700; }
+  .col-label { font-family: var(--mono); font-size: 10px; color: var(--gray); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; font-weight: 700; }
 
-  .project-about {
-    grid-column: 1 / -1;
-    font-size: 14px;
-    color: var(--charcoal);
-    line-height: 1.9;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .col-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--gray);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    font-weight: 700;
-  }
-
-  /* ── Tech tags ── */
   .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-family: var(--mono); font-size: 11px; padding: 3px 9px; border-radius: 4px; border: 1.5px solid var(--border); color: var(--gray); background: var(--gray-light); }
+  .tag.hl { border-color: var(--black); color: var(--black); background: var(--gold-light); font-weight: 700; }
 
-  .tag {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 3px 9px;
-    border-radius: 4px;
-    border: 1.5px solid var(--border);
-    color: var(--gray);
-    background: var(--gray-light);
-    font-weight: 400;
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .feature-list li { font-size: 13px; color: var(--charcoal); display: flex; align-items: flex-start; gap: 8px; line-height: 1.65; }
+  .feature-list li::before { content: '▸'; color: var(--gold); flex-shrink: 0; font-size: 12px; margin-top: 2px; -webkit-text-stroke: 0.5px var(--black); }
+
+  /* ── Lesson box ── */
+  .lesson-box {
+    grid-column: 1 / -1; background: var(--gold-light);
+    border: 1.5px solid var(--gold-border); border-radius: 8px; padding: 16px 18px;
   }
+  .lesson-label { font-family: var(--mono); font-size: 10px; font-weight: 700; color: #7a6000; letter-spacing: 0.12em; margin-bottom: 8px; }
+  .lesson-text { font-size: 13px; color: var(--charcoal); line-height: 1.8; }
+  .lesson-text strong { color: var(--black); font-weight: 700; }
 
-  .tag.hl {
-    border-color: var(--black);
-    color: var(--black);
-    background: var(--gold-light);
-    font-weight: 700;
-  }
-
-  /* ── Feature list ── */
-  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-
-  .feature-list li {
-    font-size: 13px;
-    color: var(--charcoal);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.65;
-  }
-
-  .feature-list li::before {
-    content: '▸';
-    color: var(--gold);
-    flex-shrink: 0;
-    font-size: 12px;
-    margin-top: 2px;
-    -webkit-text-stroke: 0.5px var(--black);
-  }
-
-  /* ── Project footer ── */
-  .project-footer {
-    padding: 14px 28px;
-    background: var(--gray-light);
-    border-top: 2px solid var(--black);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .project-url {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--charcoal);
-    text-decoration: none;
-    font-weight: 700;
-    border-bottom: 1.5px solid var(--gold);
-    padding-bottom: 1px;
-    transition: color 0.15s;
-  }
-
+  .project-footer { padding: 14px 26px; background: var(--gray-light); border-top: 2px solid var(--black); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .project-url { font-family: var(--mono); font-size: 12px; color: var(--charcoal); text-decoration: none; font-weight: 700; border-bottom: 1.5px solid var(--gold); padding-bottom: 1px; transition: color 0.15s; }
   .project-url:hover { color: var(--black); }
+  .project-duration { font-family: var(--mono); font-size: 12px; color: var(--gray); }
+  .project-duration strong { color: var(--black); font-weight: 700; }
 
-  .browser-url a {
-    color: inherit;
-    text-decoration: none;
-  }
+  /* ── Pitfall section ── */
+  .pitfall-list { display: flex; flex-direction: column; gap: 16px; }
+  .pitfall-card { border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 24px; }
+  .pitfall-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 10px; }
+  .pitfall-title { font-size: 16px; font-weight: 900; color: var(--white); margin-bottom: 8px; }
+  .pitfall-text { font-size: 14px; color: #aaa; line-height: 1.8; }
+  .pitfall-text strong { color: var(--gold); font-weight: 700; }
+  .pitfall-lesson { font-size: 13px; color: var(--gold); margin-top: 10px; font-weight: 700; }
 
-  .browser-url a:hover { text-decoration: underline; }
+  /* ── 6 Steps ── */
+  .steps { display: flex; flex-direction: column; gap: 0; border: 2px solid var(--black); border-radius: 12px; overflow: hidden; }
+  .step { display: flex; gap: 0; border-bottom: 2px solid var(--black); }
+  .step:last-child { border-bottom: none; }
+  .step-num { width: 56px; background: var(--black); color: var(--gold); font-family: var(--mono); font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-body { padding: 20px 24px; flex: 1; background: var(--white); }
+  .step:nth-child(even) .step-body { background: var(--gray-light); }
+  .step-title { font-size: 15px; font-weight: 900; margin-bottom: 6px; }
+  .step-text { font-size: 13px; color: var(--charcoal); line-height: 1.8; }
+  .step-text strong { color: var(--black); font-weight: 700; }
 
-  .project-duration {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--gray);
-  }
+  /* ── Mistakes ── */
+  .mistake-list { display: flex; flex-direction: column; gap: 16px; }
+  .mistake-card { border: 2px solid var(--black); border-radius: 12px; padding: 24px; background: var(--white); display: flex; gap: 16px; align-items: flex-start; transition: box-shadow 0.2s; }
+  .mistake-card:hover { box-shadow: 4px 4px 0 var(--black); }
+  .mistake-icon { font-size: 24px; flex-shrink: 0; }
+  .mistake-title { font-size: 15px; font-weight: 900; margin-bottom: 6px; color: var(--red); }
+  .mistake-text { font-size: 13px; color: var(--charcoal); line-height: 1.8; }
+  .mistake-fix { font-size: 13px; color: var(--green); font-weight: 700; margin-top: 8px; }
 
-  .project-duration strong {
-    color: var(--black);
-    font-weight: 700;
-  }
+  /* ── Prompt compare ── */
+  .prompt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .prompt-card { border-radius: 8px; padding: 20px; }
+  .prompt-bad { background: #fef2f2; border: 2px solid #fca5a5; }
+  .prompt-good { background: #f0fdf4; border: 2px solid #86efac; }
+  .prompt-label { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .prompt-bad .prompt-label { color: var(--red); }
+  .prompt-good .prompt-label { color: var(--green); }
+  .prompt-example { font-size: 13px; font-weight: 700; color: var(--black); margin-bottom: 8px; font-family: var(--mono); }
+  .prompt-note { font-size: 12px; color: var(--gray); line-height: 1.7; }
 
-  /* ── Stack table ── */
-  .stack-table {
-    border: 2px solid var(--black);
-    border-radius: 12px;
-    overflow: hidden;
-  }
+  /* ── Cost table ── */
+  .cost-table { width: 100%; border-collapse: collapse; border: 2px solid var(--black); border-radius: 12px; overflow: hidden; }
+  .cost-table thead tr { background: var(--black); color: var(--white); }
+  .cost-table th { padding: 14px 18px; text-align: left; font-size: 13px; font-weight: 700; font-family: var(--mono); }
+  .cost-table td { padding: 14px 18px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .cost-table tr:last-child td { border-bottom: none; background: var(--gold-light); font-weight: 700; }
+  .cost-table tr:nth-child(even) td { background: var(--gray-light); }
+  .cost-table tr:last-child td { background: var(--gold-light); }
+  .cost-price { color: var(--gold); -webkit-text-stroke: 0.5px #7a6000; font-weight: 700; font-family: var(--mono); }
+  .cost-free { color: var(--green); font-weight: 700; font-family: var(--mono); }
+  .cost-note { font-size: 12px; color: var(--gray); }
 
-  .stack-row {
-    display: flex;
-    align-items: baseline;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .stack-row:last-child { border-bottom: none; }
-
-  .stack-key {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--white);
-    background: var(--black);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    padding: 14px 20px;
-    width: 130px;
-    flex-shrink: 0;
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-  }
-
-  .stack-val {
-    font-size: 13px;
-    color: var(--charcoal);
-    padding: 14px 20px;
-    line-height: 1.7;
-    flex: 1;
-  }
-
-  .stack-val code {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--black);
-    background: var(--gold-light);
-    border: 1px solid #e5c800;
-    padding: 1px 7px;
-    border-radius: 4px;
-    margin: 0 2px;
-    font-weight: 700;
-  }
-
-  /* ── Insight cards ── */
-  .insight-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  .insight-card {
-    border: 2px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
-    padding: 28px;
-    background: rgba(255,255,255,0.06);
-    transition: border-color 0.2s, background 0.2s;
-  }
-
-  .insight-card:hover {
-    border-color: var(--gold);
-    background: rgba(255,201,32,0.08);
-  }
-
-  .insight-icon {
-    font-size: 28px;
-    margin-bottom: 14px;
-    display: block;
-  }
-
-  .insight-title {
-    font-size: 17px;
-    font-weight: 900;
-    margin-bottom: 10px;
-    color: var(--white);
-  }
-
-  .insight-text {
-    font-size: 14px;
-    color: #aaa;
-    line-height: 1.85;
-  }
+  /* ── Insights (dark) ── */
+  .insight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .insight-card { border: 2px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 26px; background: rgba(255,255,255,0.05); transition: border-color 0.2s, background 0.2s; }
+  .insight-card:hover { border-color: var(--gold); background: rgba(255,201,32,0.08); }
+  .insight-icon { font-size: 26px; margin-bottom: 12px; display: block; }
+  .insight-title { font-size: 16px; font-weight: 900; margin-bottom: 8px; color: var(--white); }
+  .insight-text { font-size: 13px; color: #aaa; line-height: 1.85; }
 
   /* ── Reflections ── */
-  .reflection-block {
-    border: 2px solid var(--black);
-    border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-    background: var(--white);
-    position: relative;
-    overflow: hidden;
-  }
+  .reflection-block { border: 2px solid var(--black); border-radius: 12px; padding: 28px 32px; margin-bottom: 20px; background: var(--white); position: relative; overflow: hidden; }
+  .reflection-block::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gold); }
+  .reflection-q { font-family: var(--mono); font-size: 11px; color: var(--gray); letter-spacing: 0.15em; margin-bottom: 14px; font-weight: 700; text-transform: uppercase; }
+  .reflection-text { font-size: 16px; line-height: 2; color: var(--charcoal); }
+  .reflection-text strong { color: var(--black); font-weight: 900; background: var(--gold-light); padding: 0 4px; border-radius: 3px; }
 
-  .reflection-block::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 5px;
-    background: var(--gold);
-  }
-
-  .reflection-q {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gray);
-    letter-spacing: 0.15em;
-    margin-bottom: 14px;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .reflection-text {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 2;
-    color: var(--charcoal);
-  }
-
-  .reflection-text strong {
-    color: var(--black);
-    font-weight: 900;
-    background: var(--gold-light);
-    padding: 0 4px;
-    border-radius: 3px;
-  }
+  /* ── Gold section ── */
+  .gold-quote { text-align: center; }
+  .gold-quote blockquote { font-size: clamp(18px, 3vw, 26px); font-weight: 900; line-height: 1.5; color: var(--black); margin-bottom: 16px; }
+  .gold-quote cite { font-family: var(--mono); font-size: 12px; color: var(--charcoal); font-style: normal; }
 
   /* ── Closing ── */
-  .closing {
-    text-align: center;
-    padding: 80px 0;
-    background: var(--black);
-    color: var(--white);
-  }
+  .closing { text-align: center; }
+  .closing-title { font-size: clamp(28px, 4vw, 42px); font-weight: 900; margin-bottom: 16px; color: var(--white); }
+  .closing-title span { color: var(--gold); }
+  .closing-sub { font-size: 15px; color: #888; margin-bottom: 40px; line-height: 2; }
+  .closing-sig { display: inline-flex; align-items: center; gap: 10px; border: 2px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px 28px; font-family: var(--mono); font-size: 13px; color: #888; }
+  .closing-sig strong { color: var(--gold); font-weight: 700; }
 
-  .closing-title {
-    font-size: clamp(28px, 4vw, 40px);
-    font-weight: 900;
-    margin-bottom: 14px;
-    color: var(--white);
-  }
+  /* ── Info box ── */
+  .info-box { border-left: 4px solid var(--cyan); background: #f0fdfa; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+  .info-label { font-family: var(--mono); font-size: 10px; color: var(--cyan); font-weight: 700; letter-spacing: 0.12em; margin-bottom: 8px; }
+  .info-text { font-size: 13px; color: var(--charcoal); line-height: 1.8; }
+  .info-text strong { color: var(--black); font-weight: 700; }
 
-  .closing-title span {
-    color: var(--gold);
-  }
-
-  .closing-sub {
-    font-size: 15px;
-    color: #888;
-    margin-bottom: 40px;
-    line-height: 2;
-  }
-
-  .closing-sig {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    border: 2px solid rgba(255,255,255,0.15);
-    border-radius: 8px;
-    padding: 12px 28px;
-    font-family: var(--mono);
-    font-size: 13px;
-    color: #888;
-  }
-
-  .closing-sig strong {
-    color: var(--gold);
-    font-weight: 700;
-  }
-
-  /* ── Divider ── */
-  .divider {
-    height: 2px;
-    background: var(--black);
-    margin: 0;
-  }
+  /* ── Stack table ── */
+  .stack-table { border: 2px solid var(--black); border-radius: 12px; overflow: hidden; }
+  .stack-row { display: flex; border-bottom: 1px solid var(--border); }
+  .stack-row:last-child { border-bottom: none; }
+  .stack-key { font-family: var(--mono); font-size: 11px; color: var(--white); background: var(--black); font-weight: 700; letter-spacing: 0.08em; padding: 14px 18px; width: 130px; flex-shrink: 0; display: flex; align-items: center; }
+  .stack-val { font-size: 13px; color: var(--charcoal); padding: 14px 18px; flex: 1; line-height: 1.7; }
+  .stack-val code { font-family: var(--mono); font-size: 12px; color: var(--black); background: var(--gold-light); border: 1px solid var(--gold-border); padding: 1px 7px; border-radius: 4px; margin: 0 2px; font-weight: 700; }
 
   /* ── Responsive ── */
   @media (max-width: 640px) {
-    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .hero-stats { grid-template-columns: repeat(3, 1fr); }
     .project-body { grid-template-columns: 1fr; }
     .insight-grid { grid-template-columns: 1fr; }
-    .stack-key { width: 90px; font-size: 10px; padding: 12px 12px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .prompt-grid { grid-template-columns: 1fr; }
+    .author-block { flex-direction: column; gap: 16px; }
+    .stack-key { width: 90px; }
   }
 
-  /* ── Fade in ── */
-  .fade { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  /* ── Fade ── */
+  .fade { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
   .fade.in { opacity: 1; transform: none; }
-  .d1 { transition-delay: 0.1s; }
-  .d2 { transition-delay: 0.2s; }
-  .d3 { transition-delay: 0.3s; }
+  .d1 { transition-delay: 0.1s; } .d2 { transition-delay: 0.2s; } .d3 { transition-delay: 0.3s; }
 </style>
 </head>
 <body>
 
 <!-- ── HERO ── -->
-<section class="hero">
+<header class="hero">
   <div class="wrap">
-    <div class="hero-eyebrow">DEV LOG · 2026</div>
-    <h1>30天，<mark>4個專案</mark><br>用 Claude Pro 加速開發<br>的實戰筆記</h1>
+    <div class="hero-tag">VIBE CODING REPORT · 2026</div>
+    <h1>
+      我不會寫程式，<br>
+      但我用 <mark>Claude Code</mark><br>
+      在 30 天內上線了 3 個產品
+    </h1>
     <p class="hero-sub">
-      一個月，從零到上線。記錄我如何用 AI 協作，
-      在不是「全職工程師」的條件下，完成過去可能要半年才能做完的東西。
+      一個水上運動教練的真實開發日誌。含踩坑紀錄、費用明細、工具清單，以及你可以複製的完整行動計畫。
     </p>
     <div class="hero-stats fade">
-      <div class="hstat">
-        <div class="hstat-num">~30天</div>
-        <div class="hstat-label">開發期間</div>
+      <div class="hstat"><div class="hstat-num">4</div><div class="hstat-label">完成專案</div></div>
+      <div class="hstat"><div class="hstat-num">3</div><div class="hstat-label">已上線產品</div></div>
+      <div class="hstat"><div class="hstat-num">10+</div><div class="hstat-label">串接 API</div></div>
+      <div class="hstat"><div class="hstat-num">~30天</div><div class="hstat-label">開發期間</div></div>
+      <div class="hstat"><div class="hstat-num">0</div><div class="hstat-label">手寫程式行數</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ── AUTHOR ── -->
+<div class="divider"></div>
+<section class="s-white">
+  <div class="wrap">
+    <div class="eyebrow">關於作者</div>
+    <h2 class="sec-title">我是陳建文</h2>
+    <p class="sec-sub">在你繼續讀之前，我想先跟你說清楚我是誰。</p>
+
+    <div class="author-block fade">
+      <div class="author-avatar">🏄</div>
+      <div>
+        <div class="author-name">陳建文（Rai）</div>
+        <div class="author-role">水行者海洋運動中心 創辦人 · IKO Level 2 Senior 風箏衝浪教練 · CitableRank · DiDiPo 創辦人</div>
+        <div class="author-bio">
+          我在宜蘭蘇澳經營一個叫<strong>水行者海洋運動中心</strong>的水上活動中心，做這件事已經 17 年了。
+          我上一次真正寫程式，是 <strong>13 到 14 年前</strong>，當時 iOS App 開始流行，我買了一本 C 語言的書，兼職做了幾年 Objective-C App。後來海上的工作越來越忙，就把開發這件事放掉了。
+          這次重新回來，我選擇了一個不同的方式——<strong>全程不寫任何一行程式碼。</strong>
+        </div>
       </div>
-      <div class="hstat">
-        <div class="hstat-num">4個</div>
-        <div class="hstat-label">完成專案</div>
+    </div>
+
+    <div class="quote-block fade">
+      <div class="quote-text">「程式開發如今可能將會變成每個人必備的技能，就如現在大家常用的文書處理軟體一樣。學習 AI 的使用將會大幅提升個人的學習與生產能力，也將釋放人的無限想像力。」</div>
+      <div class="quote-attr">— 陳建文，寫於完成四個專案之後</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VIBE CODING ── -->
+<div class="divider"></div>
+<section class="s-gray">
+  <div class="wrap">
+    <div class="eyebrow">AI 開發時代的真相</div>
+    <h2 class="sec-title">Vibe Coding 是什麼？</h2>
+    <p class="sec-sub">「會不會寫程式」這個問題，已經改變了。</p>
+
+    <div class="compare-grid fade">
+      <div class="compare-col">
+        <div class="compare-label">❌ 叫 AI 寫程式（工具使用）</div>
+        <div class="compare-title">你是審核者，AI 是執行者</div>
+        <div class="compare-text">給 AI 一個任務，AI 執行，你審核結果。重點在「輸出的結果」。</div>
+        <div class="compare-note">太模糊。AI 不知道你的架構、你的限制條件，輸出的東西大概不是你想要的那種。</div>
       </div>
-      <div class="hstat">
-        <div class="hstat-num">3個</div>
-        <div class="hstat-label">已上線產品</div>
+      <div class="compare-col">
+        <div class="compare-label">✅ Vibe Coding（協作方式）</div>
+        <div class="compare-title">你是方向決定者，AI 是加速器</div>
+        <div class="compare-text">你帶著想法和判斷力，跟 AI 一起把事情想清楚、做出來。重點在「過程的協作」。</div>
+        <div class="compare-note">我從來不是把需求貼給 Claude 然後等它輸出。我是在跟 Claude 對話的過程中，逐漸把一個模糊的想法變成可以執行的架構。</div>
       </div>
-      <div class="hstat">
-        <div class="hstat-num">∞</div>
-        <div class="hstat-label">Claude 對話</div>
+    </div>
+
+    <div class="quote-block fade">
+      <div class="quote-text">「前者是目的，後者是態度。Vibe Coding 不是一個工具的使用方式，它是一種跟 AI 協作的心態。」</div>
+      <div class="quote-attr">— 陳建文</div>
+    </div>
+
+    <h3 style="font-size:20px;font-weight:900;margin:40px 0 20px;">你真正需要的三件事</h3>
+    <div class="three-grid">
+      <div class="thing-card fade">
+        <div class="thing-num">1</div>
+        <div>
+          <div class="thing-title">一台可以用的電腦</div>
+          <div class="thing-text">我個人是用 iMac 開發。但這裡有一個重要的提醒：<strong>如果你的 Mac 系統是 macOS 14 以下，有些工具（像是 Claude 的 Cowork 功能）無法使用。</strong>在開始之前先確認你的電腦環境。</div>
+        </div>
+      </div>
+      <div class="thing-card fade d1">
+        <div class="thing-num">2</div>
+        <div>
+          <div class="thing-title">耐心跟 AI 反覆溝通的心態</div>
+          <div class="thing-text">這是最容易被忽略的。Vibe Coding 不是一次下指令就完成，它是一個來回溝通、反覆調整的過程。<strong>如果你沒有耐心進行這個過程，你會在第一個 bug 出現的時候就想放棄。</strong></div>
+        </div>
+      </div>
+      <div class="thing-card fade d2">
+        <div class="thing-num">3</div>
+        <div>
+          <div class="thing-title">好奇心和勇於發問的勇氣</div>
+          <div class="thing-text">你不需要知道所有答案，但你需要願意問問題。不知道某個名詞是什麼？問 AI。不確定某個決策對不對？問 AI。<strong>這個「問」的能力，比任何程式知識都更重要。</strong></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── TIMELINE ── -->
-<section class="section-light">
+<!-- ── PROJECTS ── -->
+<div class="divider"></div>
+<section class="s-white">
   <div class="wrap">
-    <div class="section-label">開發歷程</div>
-    <h2 class="section-title">四個專案，一條時間軸</h2>
+    <div class="eyebrow">四個真實專案解剖</div>
+    <h2 class="sec-title">四個專案，一條時間軸</h2>
+    <p class="sec-sub">每個專案的起點、過程、踩過的坑、學到的事。</p>
 
     <div class="timeline">
 
@@ -700,9 +456,8 @@
           </div>
           <div class="project-body">
             <p class="project-about">
-              幫社群行銷人員一鍵生成 AI 文案並自動排程發佈至 Facebook、Instagram、Threads。
-              前端由 <strong>Lovable</strong> 協助開發，後端整合三家 AI 廠商的六個模型，
-              支援系列文章自動生成大綱、逐篇生成、配圖全自動流程。
+              用 AI 幫社群小編完成文案發想、圖片生成、排程到自動發文的全流程工具。目標是讓一個人可以同時管理 Facebook、Instagram、Threads 三個平台，不需要重複操作，大幅減少社群管理的時間成本。<br><br>
+              水行者海洋運動中心需要長期維護社群，我自己就是潛在用戶。前端由 <strong>Lovable</strong> 協助開發，這是我所有開發技能的訓練場——前端 UI、資料庫、網址申請、雲端伺服器、金流串接，全部都是在這個專案裡第一次練到的。
             </p>
             <div>
               <div class="col-label">技術棧</div>
@@ -712,7 +467,6 @@
                 <span class="tag hl">Supabase</span>
                 <span class="tag">TypeScript</span>
                 <span class="tag">Tailwind</span>
-                <span class="tag">shadcn/ui</span>
                 <span class="tag">OpenAI API</span>
                 <span class="tag">Claude API</span>
                 <span class="tag">Gemini API</span>
@@ -732,10 +486,14 @@
                 <li>推薦碼系統、訂閱方案定價頁</li>
               </ul>
             </div>
+            <div class="lesson-box">
+              <div class="lesson-label">🚧 最大的踩坑：Meta App Review</div>
+              <div class="lesson-text">這個專案同時使用 Facebook、Instagram、Threads 三個平台的 API。Meta 要求提供所有功能的完整操作錄影才能審核。我錄了一個影片，把三個 API 的功能一次說明，但沒有加英文字幕。結果只通過了 Threads，Facebook 和 Instagram 需要重審，還需要補上英文字幕。<strong>教訓：Meta 審核一定要提前準備好完整的英文說明文件。</strong></div>
+            </div>
           </div>
           <div class="project-footer">
             <a class="project-url" href="https://didipo.com" target="_blank" rel="noopener">didipo.com ↗</a>
-            <span class="project-duration">開發時程：<strong>約 3 週</strong></span>
+            <span class="project-duration">開發時程：<strong>約 3 週</strong> · 目前狀態：<strong>暫停中（待 Meta 審核）</strong></span>
           </div>
         </div>
       </div>
@@ -762,8 +520,8 @@
           </div>
           <div class="project-body">
             <p class="project-about">
-              涵蓋 AI 智商、財商、情商、領導力、社群行銷力、戶外安全力共六種測驗的線上平台。
-              每個測驗都有完整的加權計分引擎與付費深度報告，並支援 Facebook 動態 OG 分享卡片。
+              一個涵蓋六種測驗的線上平台：AI 智商（AIIQ）、財商（FQ）、情商（EQ）、領導力（LQ）、社群行銷力（SMQ）、戶外安全力（OSQ）。每種測驗都有完整的加權計分引擎，測完可以購買付費深度報告，也可以分享「我的 AIIQ 超越了 88% 受測者」這類社群卡片。<br><br>
+              這是四個專案裡技術完整度最高的一個。這裡有一個亮點：<strong>Python DOCX 解析器</strong>——先在 Word 文件裡把所有題目和計分邏輯寫好，然後用 Python 把 Word 文件自動解析成 TypeScript 格式的資料結構，直接餵給前端使用。
             </p>
             <div>
               <div class="col-label">技術棧</div>
@@ -774,7 +532,6 @@
                 <span class="tag">Tailwind</span>
                 <span class="tag">Cloudflare Pages</span>
                 <span class="tag">Lemon Squeezy</span>
-                <span class="tag">Cloudflare Functions</span>
                 <span class="tag">Python DOCX parser</span>
               </div>
             </div>
@@ -786,13 +543,16 @@
                 <li>6 份付費深度報告</li>
                 <li>Email + Google OAuth、歷史紀錄</li>
                 <li>動態 OG tags 社群分享卡片</li>
-                <li>DOCX 規格書自動轉 TypeScript 流程</li>
               </ul>
+            </div>
+            <div class="lesson-box">
+              <div class="lesson-label">💡 這個案例說明了一件事</div>
+              <div class="lesson-text">AI 協作開發不只是「請 AI 寫程式」，而是用 AI 幫你想出更聰明的解決方案。Python DOCX 解析器這個想法，就是在跟 Claude 討論「<strong>怎麼管理這麼多題目</strong>」的時候想到的。</div>
             </div>
           </div>
           <div class="project-footer">
             <a class="project-url" href="https://iqai-5zv.pages.dev" target="_blank" rel="noopener">iqai-5zv.pages.dev ↗</a>
-            <span class="project-duration">開發時程：<strong>約 2 週</strong></span>
+            <span class="project-duration">開發時程：<strong>約 2 週</strong> · 目前狀態：<strong>完成，待上線</strong></span>
           </div>
         </div>
       </div>
@@ -819,9 +579,8 @@
           </div>
           <div class="project-body">
             <p class="project-about">
-              以台灣常見災難情境為主題的教育型問答遊戲：地震、海嘯、戰爭、異常天候、
-              恐怖攻擊、疫情、不明生物，共 7 大情境 159 題，含 S/A/B/C/D/F 評級與生存報告。
-              這是這段期間開發速度最快的專案，<strong>一週內從零到金流全部上線</strong>。
+              以台灣常見災難情境為主題的教育型問答遊戲：地震、海嘯、戰爭、異常天候、恐怖攻擊、疫情、不明生物，共 7 大情境、159 道題目，每題都有分支邏輯。玩完後有 S/A/B/C/D/F 評級，付費可以下載 PDF 版的完整生存報告。<br><br>
+              這是四個專案裡開發速度最快的。能在一週內完成，關鍵不是技術，而是<strong>每天只問一個問題：今天最重要的一件事是什麼？</strong>
             </p>
             <div>
               <div class="col-label">技術棧</div>
@@ -833,24 +592,24 @@
                 <span class="tag">Supabase</span>
                 <span class="tag">Lemon Squeezy</span>
                 <span class="tag">Google Imagen 4</span>
-                <span class="tag">Cloudflare Pages</span>
               </div>
             </div>
             <div>
-              <div class="col-label">完成功能</div>
+              <div class="col-label">一週上線三個原則</div>
               <ul class="feature-list">
-                <li>7 大情境 159 題含分支邏輯 + 評級系統</li>
-                <li>動態倒數計時器（依題目字數自動調整）</li>
-                <li>人物側寫問卷（9 題 + 隨機生成角色）</li>
-                <li>結果分享（Facebook / IG / Threads / 下載）</li>
-                <li>付費 PDF 報告（Lemon Squeezy 金流完成）✅</li>
-                <li>許願池社群功能 + 90+ 張 AI 配圖</li>
+                <li>不做「可以以後再加」的功能</li>
+                <li>遊戲邏輯優先，介面美化排後面</li>
+                <li>金流是最後一步，但必須在上線前確認</li>
               </ul>
+            </div>
+            <div class="lesson-box">
+              <div class="lesson-label">🖼️ 90+ 張配圖：Google Imagen 4 的使用</div>
+              <div class="lesson-text">遊戲裡每個情境都需要配圖。我用 Google Imagen 4 生成了超過 90 張圖片。流程是：先確定每個情境的視覺風格，寫出一致的基礎 prompt（台灣場景、真實感、略帶緊張感），然後針對每個題目的具體情況調整細節。<strong>AI 生成配圖讓這個環節從「可能需要一週」變「一天內完成」。</strong></div>
             </div>
           </div>
           <div class="project-footer">
             <a class="project-url" href="https://zerohourtw.com" target="_blank" rel="noopener">zerohourtw.com ↗</a>
-            <span class="project-duration">開發時程：<strong>約 1 週</strong></span>
+            <span class="project-duration">開發時程：<strong>約 1 週</strong> · 目前狀態：<strong>上線，金流啟用</strong></span>
           </div>
         </div>
       </div>
@@ -858,7 +617,7 @@
       <!-- P4: CitableRank -->
       <div class="project fade d3">
         <div class="project-dot">04</div>
-        <div class="project-period">// Mar 25 前後 · 1–2 天</div>
+        <div class="project-period">// Mar 25 前後 · 8 天從想法到原型</div>
         <div class="project-card">
           <div class="browser-mockup">
             <div class="browser-bar">
@@ -873,36 +632,41 @@
               <div class="project-name">CitableRank · AI讚聲</div>
               <div class="project-desc-short">AI 搜尋能見度分析工具</div>
             </div>
-            <span class="badge badge-proto">原型階段</span>
+            <span class="badge badge-proto">原型 → SaaS</span>
           </div>
           <div class="project-body">
             <p class="project-about">
-              台灣第一個繁體中文 GEO（Generative Engine Optimization）分析工具。
-              幫品牌分析自己在 ChatGPT、Claude、Gemini 被推薦的狀況，提供「讚聲分數」與改善建議。
-              前端由 <strong>Lovable</strong> 協助開發，目前為 HTML 原型，SaaS 版本規劃中。
+              台灣第一個繁體中文 GEO（Generative Engine Optimization，生成引擎優化）分析工具。「讚聲」來自台語，意思是有人幫你說好話、幫你背書——這正是 AI 時代品牌需要的能力。<br><br>
+              SEO 是為了讓 Google 找到你。GEO 是為了讓 AI 推薦你。兩者的邏輯完全不同——SEO 靠關鍵字密度和反向連結，GEO 靠的是你的內容有沒有被 AI 模型認為是「值得引用的來源」。前端由 <strong>Lovable</strong> 協助開發，技術組合是 Claude 建議的。
             </p>
             <div>
-              <div class="col-label">技術棧（現在）</div>
+              <div class="col-label">技術棧</div>
               <div class="tech-tags">
                 <span class="tag hl">Lovable</span>
-                <span class="tag hl">單頁 HTML</span>
-                <span class="tag hl">Python proxy</span>
-                <span class="tag">Claude API</span>
+                <span class="tag hl">Next.js 14</span>
+                <span class="tag hl">Supabase</span>
+                <span class="tag">Clerk</span>
+                <span class="tag">Anthropic API</span>
+                <span class="tag">Cloudflare Pages</span>
               </div>
             </div>
             <div>
-              <div class="col-label">規劃 SaaS 版</div>
+              <div class="col-label">這個專案的特別之處</div>
               <ul class="feature-list">
                 <li>多 LLM 並測（Claude + GPT + Gemini + Perplexity）</li>
                 <li>競爭對手追蹤 + 讚聲地圖</li>
-                <li>AI 自動生成建議問題</li>
-                <li>Next.js 14 + Supabase + Clerk + Stripe</li>
+                <li>CitableRank 本身就在實踐它所推廣的理念</li>
+                <li>台灣第一個繁體中文 GEO 分析工具</li>
               </ul>
+            </div>
+            <div class="lesson-box">
+              <div class="lesson-label">💬 陳建文說</div>
+              <div class="lesson-text"><strong>「GEO（AI 搜尋優化）是 SEO 之後下一個十年的戰場。台灣還沒有人在做繁體中文的工具。這個賽道，我想認真跑。」</strong></div>
             </div>
           </div>
           <div class="project-footer">
             <a class="project-url" href="https://citablerank.com" target="_blank" rel="noopener">citablerank.com ↗</a>
-            <span class="project-duration">定價：<strong>Free / NT$599 / NT$1,499</strong></span>
+            <span class="project-duration">目前狀態：<strong>上線，Paddle 金流審核中</strong></span>
           </div>
         </div>
       </div>
@@ -911,48 +675,200 @@
   </div>
 </section>
 
-<!-- ── STACK ── -->
+<!-- ── PITFALLS ── -->
 <div class="divider"></div>
-<section class="section-gray">
+<section class="s-black">
   <div class="wrap">
-    <div class="section-label">技術清單</div>
-    <h2 class="section-title">這個月用到的技術全覽</h2>
-    <div class="stack-table fade">
-      <div class="stack-row">
-        <div class="stack-key">前端開發</div>
-        <div class="stack-val"><code>Lovable</code>（DiDiPo / CitableRank 前端）<code>React + Vite</code><code>TypeScript</code><code>Tailwind CSS</code><code>shadcn/ui</code><code>Framer Motion</code><code>Zustand</code></div>
+    <div class="eyebrow">踩坑實錄</div>
+    <h2 class="sec-title">金流四連坑</h2>
+    <p class="sec-sub">這是整份報告裡我最希望你認真看的部分。金流串接是我遇到過最浪費時間的事，前後嘗試了四家，走了很多冤枉路。</p>
+
+    <div class="pitfall-list">
+      <div class="pitfall-card fade">
+        <div class="pitfall-num">坑 01</div>
+        <div class="pitfall-title">藍新金流 — 等了超過一個月，仍未審核</div>
+        <div class="pitfall-text">我的水上活動網站用藍新超過十年，所以 DiDiPo 第一個想到的就是藍新。送審之後，客服說需要 10–15 個工作天。我就傻傻地等。結果等到這份報告都寫出來了，審核還沒過。</div>
+        <div class="pitfall-lesson">教訓：如果你的產品是數位服務，台灣本土金流審核時間非常不穩定。</div>
       </div>
-      <div class="stack-row">
-        <div class="stack-key">後端/DB</div>
-        <div class="stack-val"><code>Supabase</code> PostgreSQL + Auth + Edge Functions + RLS</div>
+      <div class="pitfall-card fade d1">
+        <div class="pitfall-num">坑 02</div>
+        <div class="pitfall-title">Stripe — 台灣無法直接使用</div>
+        <div class="pitfall-text">Claude 最初建議 Stripe。查了一下，在台灣要使用 Stripe 需要在美國設立公司，對我來說太麻煩了，直接放棄。</div>
+        <div class="pitfall-lesson">教訓：台灣個人/公司無法直接申請 Stripe，不要浪費時間研究。</div>
       </div>
-      <div class="stack-row">
-        <div class="stack-key">部署</div>
-        <div class="stack-val"><code>Cloudflare Pages</code> + Pages Functions，3 個自訂網域</div>
+      <div class="pitfall-card fade d2">
+        <div class="pitfall-num">坑 03</div>
+        <div class="pitfall-title">Lemon Squeezy — 數位商品可以，SaaS 訂閱不行</div>
+        <div class="pitfall-text">我在零時生存專案用 Lemon Squeezy 串接付費 PDF 下載，審核通過了。但當我想在 DiDiPo 用月費訂閱制，卻被拒絕——而且沒有說明原因。</div>
+        <div class="pitfall-lesson">結論：Lemon Squeezy 適合單次數位商品（電子書、PDF），SaaS 訂閱制建議直接用 Paddle。</div>
       </div>
-      <div class="stack-row">
-        <div class="stack-key">AI 模型</div>
-        <div class="stack-val"><code>Claude Haiku / Sonnet</code><code>GPT-4o mini</code><code>Gemini 2.5 Flash</code><code>Google Imagen 4</code></div>
-      </div>
-      <div class="stack-row">
-        <div class="stack-key">第三方 API</div>
-        <div class="stack-val"><code>Meta Graph API</code><code>Threads API</code><code>Google OAuth</code><code>Lemon Squeezy</code></div>
-      </div>
-      <div class="stack-row">
-        <div class="stack-key">開發協作</div>
-        <div class="stack-val"><code>Claude Code</code>（主要 coding 夥伴）<code>Lovable</code>（前端 UI）<code>GitHub</code><code>Supabase CLI</code></div>
+      <div class="pitfall-card fade d3">
+        <div class="pitfall-num">坑 04</div>
+        <div class="pitfall-title">Paddle — 目前使用中，審核中</div>
+        <div class="pitfall-text">這是我目前用來處理 CitableRank 和 DiDiPo SaaS 訂閱的金流。Paddle 是 Merchant of Record（代收代付）模式，對台灣公司來說法律結構比較清楚。手續費跟 Lemon Squeezy 相同（5% + 0.5 歐元/筆），審核中。</div>
+        <div class="pitfall-lesson">給新手的建議：如果你一開始就打算做 SaaS 訂閱制，直接從 Paddle 開始，不要走藍新和 Lemon Squeezy 的冤枉路。</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── INSIGHTS (dark) ── -->
+<!-- ── 6 STEPS ── -->
 <div class="divider"></div>
-<section class="section-dark">
+<section class="s-gray">
   <div class="wrap">
-    <div class="section-label">心得整理</div>
-    <h2 class="section-title">這個月學到的四件事</h2>
-    <div class="insight-grid">
+    <div class="eyebrow">方法論</div>
+    <h2 class="sec-title">Claude Code 的正確使用方式</h2>
+    <p class="sec-sub">我把這一個月試錯出來的東西整理成可以複製的流程，讓你少走冤枉路。核心原則只有一個：<strong>在動手開發之前，先把事情想清楚。</strong></p>
+
+    <div class="steps fade">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">先跟 Claude Chat 聊，不要直接開 Code</div>
+          <div class="step-text">把你的想法用自然語言說清楚。不需要技術術語，就像跟朋友講話一樣。這個階段的目標是「把模糊的想法說清楚」，不是寫程式。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">請 AI 搜尋有沒有類似的現成服務</div>
+          <div class="step-text">讓 Claude 幫你搜尋是否已有相關的工具或競品，分析他們的架構和功能，整理成清單。你不需要重新發明輪子，你需要知道輪子已經長什麼樣子。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">讓 AI 整理出完整的架構與規格書</div>
+          <div class="step-text">請 Claude 根據你的想法和市場研究，產出一份規格書：功能清單、資料結構、API 需求、技術棧建議。<strong>這份規格書是後續所有工作的基礎。</strong></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">問其他 AI：如果這個專案失敗，原因是什麼？</div>
+          <div class="step-text">把規格書同時丟給 ChatGPT 和 Gemini，問他們：「如果這個想法失敗了，最可能的原因是什麼？怎麼解決？」用不同的 AI 做壓力測試，找出你可能沒想到的盲點。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">整合後丟給 Claude Code，開始執行</div>
+          <div class="step-text">把規格書、失敗分析、解決方案全部整合，丟給 Claude Code 確認工具和執行計畫，然後正式開始開發。從這一步開始，才是真正動手的時候。</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">針對每個功能逐一測試和調整</div>
+          <div class="step-text">不要想一次做完所有功能再測試。每完成一個功能就測試一次，確認沒問題再繼續下一個。<strong>發現問題越早，修復成本越低。</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-block fade" style="margin-top:32px;">
+      <div class="quote-text">「AI 很像許願池。你許什麼願，它就給你什麼。但就像電影裡的劇情，願望實現了，卻附帶了你不想要的東西。所以在許願之前，先想清楚怎麼正確地下指令、設定框架、說清楚你要避免什麼。」</div>
+      <div class="quote-attr">— 陳建文的核心開發哲學</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MISTAKES ── -->
+<div class="divider"></div>
+<section class="s-white">
+  <div class="wrap">
+    <div class="eyebrow">新手避坑</div>
+    <h2 class="sec-title">新手最常犯的三個錯誤</h2>
+    <p class="sec-sub">這三個錯誤我都犯過，現在整理出來讓你少走彎路。</p>
+
+    <div class="prompt-grid fade">
+      <div class="prompt-card prompt-bad">
+        <div class="prompt-label">❌ 壞的 PROMPT 方式</div>
+        <div class="prompt-example">「幫我做一個登入功能。」</div>
+        <div class="prompt-note">太模糊。AI 不知道你用什麼資料庫、想要什麼登入方式、有什麼限制條件。它會做出一個「某種」登入功能，但大概不是你想要的那種。</div>
+      </div>
+      <div class="prompt-card prompt-good">
+        <div class="prompt-label">✅ 好的 PROMPT 方式</div>
+        <div class="prompt-example">「我的專案用 Supabase 做資料庫。幫我實作 Email + Google OAuth 登入，登入後跳轉到 /dashboard 頁面，失敗時顯示錯誤訊息在表單下方，不要跳出彈窗。」</div>
+        <div class="prompt-note">具體、有邊界、說清楚你要避免什麼。</div>
+      </div>
+    </div>
+
+    <div class="mistake-list">
+      <div class="mistake-card fade">
+        <div class="mistake-icon">📝</div>
+        <div>
+          <div class="mistake-title">錯誤一：忘記記錄開發進度</div>
+          <div class="mistake-text">Claude Code 的上下文是有限的。開發一段時間後，如果你沒有養成記錄進度的習慣，隔天回來時 AI 就忘了你要做什麼。你可能還要重新修改之前已經改過的地方，重工率很高。</div>
+          <div class="mistake-fix">解決方法：每次結束工作前，請 Claude 幫你整理一份「今天做了什麼、明天要繼續做什麼」的摘要，存成文字檔案。</div>
+        </div>
+      </div>
+      <div class="mistake-card fade d1">
+        <div class="mistake-icon">✂️</div>
+        <div>
+          <div class="mistake-title">錯誤二：同時修改太多東西</div>
+          <div class="mistake-text">一次只解決一個問題。很多新手看到 AI 輸出了一大段程式碼，就想一次把所有功能都加進去。這樣做的結果是：出現問題時，你不知道是哪個部分出了錯。</div>
+          <div class="mistake-fix">解決方法：每次只給 AI 一個清楚的任務，做完測試，確認沒問題再繼續。</div>
+        </div>
+      </div>
+      <div class="mistake-card fade d2">
+        <div class="mistake-icon">🔧</div>
+        <div>
+          <div class="mistake-title">錯誤三：出錯時不知道怎麼處理</div>
+          <div class="mistake-text">當 Claude Code 給你錯誤或跑偏的答案時，不要只是說「這樣不對，重新做一次」。這樣會讓 AI 做出另一個不對的版本。</div>
+          <div class="mistake-fix">正確做法：把錯誤訊息完整貼給 Claude，說明「這個結果跟我預期的不同，我預期的是＿＿，實際得到的是＿＿」，讓 AI 基於具體的差異來修正。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STACK ── -->
+<div class="divider"></div>
+<section class="s-gray">
+  <div class="wrap">
+    <div class="eyebrow">工具組與費用</div>
+    <h2 class="sec-title">完整工具清單與費用</h2>
+    <p class="sec-sub">這一章沒有廢話。你需要知道準備多少錢、裝什麼工具、哪些是必要的。</p>
+
+    <div class="stack-table fade" style="margin-bottom:32px;">
+      <div class="stack-row"><div class="stack-key">開發核心</div><div class="stack-val"><code>Claude Pro</code> US$20/月（必要）· <code>Lovable</code> US$25/月（前端 UI，建議）</div></div>
+      <div class="stack-row"><div class="stack-key">後端/DB</div><div class="stack-val"><code>Supabase</code> 免費起（必要）· PostgreSQL + Auth + Edge Functions + RLS</div></div>
+      <div class="stack-row"><div class="stack-key">部署/網域</div><div class="stack-val"><code>Cloudflare Pages</code> 部署免費 · <code>Cloudflare 網域</code> US$10/年 · <code>Zeabur</code> US$5/月（視需求）</div></div>
+      <div class="stack-row"><div class="stack-key">金流</div><div class="stack-val"><code>Lemon Squeezy</code> 單次數位商品（5% + US$0.5/筆）· <code>Paddle</code> SaaS 訂閱制（推薦）</div></div>
+      <div class="stack-row"><div class="stack-key">AI 模型</div><div class="stack-val"><code>Claude Haiku / Sonnet</code><code>GPT-4o mini</code><code>Gemini 2.5 Flash</code><code>Google Imagen 4</code></div></div>
+      <div class="stack-row"><div class="stack-key">版本控制</div><div class="stack-val"><code>GitHub</code> 免費（建議養成習慣）</div></div>
+    </div>
+
+    <div style="border:2px solid var(--black);border-radius:12px;overflow:hidden;" class="fade">
+      <table class="cost-table" style="width:100%;border:none;">
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th>金額</th>
+            <th>備註</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Claude Pro</td><td class="cost-price">US$20 / 月</td><td class="cost-note">最核心的投資，不可省</td></tr>
+          <tr><td>Lovable（前端 UI）</td><td class="cost-price">US$25 / 月</td><td class="cost-note">一個月可設計 4–6 個網站</td></tr>
+          <tr><td>Zeabur（伺服器）</td><td class="cost-price">US$5 / 月</td><td class="cost-note">視需求，Cloudflare Pages 可替代（免費）</td></tr>
+          <tr><td>Cloudflare 網域</td><td class="cost-price">US$10 / 年</td><td class="cost-note">每個網域約此費用</td></tr>
+          <tr><td>Supabase</td><td class="cost-free">免費</td><td class="cost-note">未來可升級 US$25/月</td></tr>
+          <tr><td>GitHub</td><td class="cost-free">免費</td><td class="cost-note">版本控制，養成習慣</td></tr>
+          <tr><td><strong>月固定成本（最低配置）</strong></td><td><strong>≈ US$50</strong></td><td class="cost-note">約 NT$1,600</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── INSIGHTS ── -->
+<div class="divider"></div>
+<section class="s-black">
+  <div class="wrap">
+    <div class="eyebrow">開發心得</div>
+    <h2 class="sec-title">這個月學到的四件事</h2>
+    <div class="insight-grid" style="margin-bottom:40px;">
       <div class="insight-card fade">
         <span class="insight-icon">⚡</span>
         <div class="insight-title">AI 加速的不是打字，是決策</div>
@@ -974,66 +890,46 @@
         <div class="insight-text">零時生存一週從零到金流上線，關鍵是每天只問一個問題：「今天最重要的一件事是什麼？」功能可以迭代，上線時機不能等。</div>
       </div>
     </div>
+
+    <div class="quote-block">
+      <div class="quote-text">「如果你還不知道如何開始，可以先問 AI。如果開始了，就以最小可行產品（MVP）迅速丟到市場測試。用成果導向的開發方式，會讓你更有動力繼續。」</div>
+      <div class="quote-attr">— 陳建文，給每一個猶豫要不要開始的人</div>
+    </div>
   </div>
 </section>
 
-<!-- ── REFLECTIONS ── -->
+<!-- ── GOLD QUOTE ── -->
 <div class="divider"></div>
-<section class="section-gray">
+<section class="s-gold">
   <div class="wrap">
-    <div class="section-label">開發心得</div>
-    <h2 class="section-title">三個我想說的事</h2>
-
-    <div class="reflection-block fade">
-      <div class="reflection-q">01 · 關於 AI 協作</div>
-      <div class="reflection-text">
-        我不是傳統意義上的全職工程師。但這個月我完成了過去可能要半年的工程量。
-        <strong>Claude 幫我填補的不是「不會寫程式」的缺口，而是「一個人做不完」的缺口。</strong>
-        它像是一個永遠在線、永遠有耐心、永遠記得你昨天說了什麼的資深工程師。
-      </div>
-    </div>
-
-    <div class="reflection-block fade d1">
-      <div class="reflection-q">02 · 關於速度與品質</div>
-      <div class="reflection-text">
-        快速不代表粗糙。<strong>DiDiPo 有完整的 OAuth 流程、IQ Suite 有嚴謹的計分引擎、
-        零時生存有 159 題含分支邏輯</strong>——這些不是將就的作品。
-        AI 協作讓我可以在維持品質的同時，把交付速度提高 3–5 倍。
-      </div>
-    </div>
-
-    <div class="reflection-block fade d2">
-      <div class="reflection-q">03 · 關於接下來</div>
-      <div class="reflection-text">
-        CitableRank 是這個月最後誕生的想法，也可能是最有商業潛力的一個。
-        <strong>GEO（AI 搜尋優化）是 SEO 之後下一個十年的戰場</strong>，台灣還沒有人在做繁體中文的工具。
-        這個賽道，我想認真跑。
-      </div>
+    <div class="gold-quote">
+      <blockquote>「程式開發如今可能將會變成每個人必備的技能，就如現在大家常用的文書處理軟體一樣。學習 AI 的使用將會大幅提升個人的學習與生產能力，也將釋放人的無限想像力。」</blockquote>
+      <cite>— 陳建文，寫於完成四個專案之後</cite>
     </div>
   </div>
 </section>
 
 <!-- ── CLOSING ── -->
 <div class="divider"></div>
-<section class="closing">
+<section class="s-black closing">
   <div class="wrap">
     <div class="closing-title">一個月，<span>只是開始。</span></div>
     <p class="closing-sub">
-      這四個專案都還在成長。<br>
-      如果你對其中任何一個有興趣，歡迎來聊。
+      做完這四個專案之後，我對「程式開發」這件事的看法徹底改變了。<br>
+      它不再是工程師的專屬技能，而是一種即將變成人人必備的能力。<br><br>
+      這四個專案都還在成長。如果你對 Vibe Coding 有任何問題，歡迎找我。
     </p>
     <div class="closing-sig">
-      Written with <strong>Claude Code</strong> + <strong>Lovable</strong> · 2026
+      陳建文（Rai） · Written with <strong>Claude Code</strong> + <strong>Lovable</strong> · 2026<br>
+      水行者海洋運動中心 · CitableRank · DiDiPo
     </div>
   </div>
 </section>
 
 <script>
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('in');
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('in'); });
+  }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
 
   document.querySelectorAll('.fade').forEach(el => observer.observe(el));
 
