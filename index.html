@@ -87,10 +87,11 @@
     margin-bottom: 40px;
   }
   .author-avatar {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: var(--gold); border: 3px solid var(--black);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 32px; flex-shrink: 0;
+    width: 100px; height: 100px; border-radius: 50%;
+    border: 3px solid var(--black);
+    object-fit: cover; object-position: center top;
+    flex-shrink: 0;
+    box-shadow: 4px 4px 0 var(--black);
   }
   .author-name { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
   .author-role { font-size: 13px; color: var(--gray); margin-bottom: 12px; font-family: var(--mono); }
@@ -350,7 +351,7 @@
     <p class="sec-sub">在你繼續讀之前，我想先跟你說清楚我是誰。</p>
 
     <div class="author-block fade">
-      <div class="author-avatar">🏄</div>
+      <img class="author-avatar" src="rai.jpg" alt="陳建文 Rai">
       <div>
         <div class="author-name">陳建文（Rai）</div>
         <div class="author-role">水行者海洋運動中心 創辦人 · IKO Level 2 Senior 風箏衝浪教練 · CitableRank · DiDiPo 創辦人</div>
