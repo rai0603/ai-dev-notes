@@ -676,6 +676,72 @@
         </div>
       </div>
 
+      <!-- P5: watermanbooking -->
+      <div class="project fade d3">
+        <div class="project-dot">05</div>
+        <div class="project-period">// Apr 20 → Apr 21 · 2 天從零到上線</div>
+        <div class="project-card">
+          <div class="browser-mockup">
+            <div class="browser-bar">
+              <div class="browser-dots"><span></span><span></span><span></span></div>
+              <div class="browser-url"><a href="https://rai0603.github.io/watermanbooking/" target="_blank" rel="noopener">https://rai0603.github.io/watermanbooking/</a></div>
+            </div>
+            <img class="browser-screenshot" src="screenshots/watermanbooking.png" alt="水行者預約系統" loading="lazy">
+          </div>
+          <div class="project-header">
+            <div>
+              <div class="project-index">PROJECT 05</div>
+              <div class="project-name">水行者預約系統</div>
+              <div class="project-desc-short">宜蘭蘇澳海上秘境體驗活動 · 一頁式預約表單</div>
+            </div>
+            <span class="badge badge-proto">零成本自用工具</span>
+          </div>
+          <div class="project-body">
+            <p class="project-about">
+              我自家水行者海洋運動中心的官網預約表單。客戶在 waterman-sports.com 上一頁式填表 → LINE 群組即時通知我 → 顯示匯款資訊讓客戶截圖存檔。兩天就從零做到嵌入主站上線。<br><br>
+              這個專案的關鍵決策是<strong>零成本、零維護</strong>：資料庫用 Google Sheet（手機直接看訂單）、後端用 Google Apps Script（免費、免部署）、前端丟 GitHub Pages（免費、push 自動 deploy）、嵌回 WordPress 用 iframe（不跟主題樣式打架）。每月固定成本：<strong>NT$ 0</strong>。
+            </p>
+            <div>
+              <div class="col-label">技術棧</div>
+              <div class="tech-tags">
+                <span class="tag hl">Vite + React + TS</span>
+                <span class="tag hl">Google Apps Script</span>
+                <span class="tag hl">Google Sheets</span>
+                <span class="tag">Tailwind</span>
+                <span class="tag">LINE Messaging API</span>
+                <span class="tag">GitHub Pages</span>
+                <span class="tag">iframe + postMessage</span>
+              </div>
+            </div>
+            <div>
+              <div class="col-label">完成功能</div>
+              <ul class="feature-list">
+                <li>活動三選一（SUP 一人一版 / SUP 兩人一版 / 獨木舟）+ 即時計價</li>
+                <li>平假日自動判斷（靜態台灣國定假日清單，5–10 月假日費）</li>
+                <li>訂單送出 → LINE 群組即時推播 → 客戶看到訂單編號與匯款資訊</li>
+                <li>Google Sheet 14 欄對齊客服既有名單，複製貼上就能用</li>
+                <li>iframe 嵌入 WordPress，高度自動回報不卡版</li>
+              </ul>
+            </div>
+            <div class="lesson-box">
+              <div class="lesson-label">💰 十年折騰 vs 兩天零成本</div>
+              <div class="lesson-text">
+                過去十年我用 WooCommerce + Pinpoint 行事曆預約外掛，每年固定外掛授權費：<br>
+                · WooCommerce Account Funds：<strong>$89 USD/年</strong><br>
+                · Pinpoint Booking：<strong>$70 USD/年</strong><br>
+                · 合計：<strong>$159 USD/年</strong> × 10 年 ≈ <strong>$1,590 USD（約 NT$ 50,000）</strong><br><br>
+                但真正痛的不是錢，是<strong>每次改版都在打架</strong>——WordPress 升級、PHP 升級、WooCommerce 改 block editor、主題更新導致樣式跑版，隔幾個月就要花一個晚上修「本來能用的東西」。外掛開發者各自為政，一個升級另一個就壞。<br><br>
+                新版本：<strong>NT$ 0/月</strong>、兩天上線、程式我自己寫自己改，沒有任何第三方外掛可以背刺我。十年下來存的那 NT$ 50,000 是 bonus，省下的時間跟心智耗損才是真正的回報。
+              </div>
+            </div>
+          </div>
+          <div class="project-footer">
+            <a class="project-url" href="https://rai0603.github.io/watermanbooking/" target="_blank" rel="noopener">rai0603.github.io/watermanbooking ↗</a>
+            <span class="project-duration">開發時程：<strong>2 天</strong> · 目前狀態：<strong>已上線，嵌入 waterman-sports.com</strong></span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
