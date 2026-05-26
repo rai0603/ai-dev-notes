@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding 實戰課｜10 堂課，從不會寫到能上線 — Rai</title>
+<meta name="description" content="把「30 天上線 3 個產品」的方法論拆成 10 堂課。從心態、思考協議、技術落地到上線後的真實世界，用 9 個真實 side project 當教材。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #FFC920;
+    --gold-light: #FFF8DC;
+    --gold-border: #e5c800;
+    --black: #111111;
+    --charcoal: #3a3a3a;
+    --gray: #555555;
+    --gray-mid: #888;
+    --gray-light: #f7f7f7;
+    --border: #e8e8e8;
+    --white: #ffffff;
+    --cyan: #00b8a0;
+    --red: #e53935;
+    --green: #2e7d32;
+    --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--white); color: var(--black); font-family: var(--sans); font-size: 18px; line-height: 1.85; }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── Sections ── */
+  .s-white  { background: var(--white); padding: 72px 0; }
+  .s-gray   { background: var(--gray-light); padding: 72px 0; }
+  .s-black  { background: var(--black); padding: 72px 0; color: var(--white); }
+  .s-gold   { background: var(--gold); padding: 56px 0; }
+  .divider  { height: 2px; background: var(--black); }
+
+  /* ── Section labels ── */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.2em; color: var(--gray); margin-bottom: 12px; text-transform: uppercase;
+  }
+  .eyebrow::before { content: ''; display: inline-block; width: 20px; height: 2px; background: var(--gold); }
+  .s-black .eyebrow { color: #999; }
+  .s-black .eyebrow::before { background: var(--gold); }
+
+  .sec-title { font-size: 28px; font-weight: 900; line-height: 1.3; margin-bottom: 8px; }
+  .sec-sub   { font-size: 15px; color: var(--gray); margin-bottom: 40px; line-height: 1.7; }
+  .s-black .sec-title { color: var(--white); }
+  .s-black .sec-sub   { color: #aaa; }
+
+  /* ── Hero ── */
+  .hero { background: var(--white); padding: 72px 0 64px; border-bottom: 2px solid var(--black); }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--black); color: var(--gold);
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.15em; padding: 6px 14px; border-radius: 4px; margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 52px); font-weight: 900; line-height: 1.2;
+    letter-spacing: -0.02em; margin-bottom: 20px;
+  }
+  .hero h1 mark { background: var(--gold); color: var(--black); padding: 0 6px; border-radius: 3px; font-style: normal; }
+  .hero-sub { font-size: 16px; color: var(--gray); line-height: 1.9; max-width: 700px; margin-bottom: 36px; }
+
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border: 2px solid var(--black); border-radius: 12px; overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .hstat { padding: 20px 16px; border-right: 2px solid var(--black); text-align: center; }
+  .hstat:last-child { border-right: none; }
+  .hstat-num { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 5px; color: var(--black); }
+  .hstat:nth-child(1) .hstat-num,
+  .hstat:nth-child(4) .hstat-num { color: var(--gold); -webkit-text-stroke: 1px var(--black); }
+  .hstat-label { font-size: 11px; color: var(--gray); font-weight: 500; }
+
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.1em; padding: 14px 24px;
+    border: 2px solid var(--black); border-radius: 8px;
+    text-decoration: none; transition: all 0.15s;
+  }
+  .btn-primary { background: var(--gold); color: var(--black); box-shadow: 4px 4px 0 var(--black); }
+  .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); }
+  .btn-ghost { background: var(--white); color: var(--black); }
+  .btn-ghost:hover { background: var(--gray-light); }
+
+  /* ── Course overview table ── */
+  .overview-tbl {
+    width: 100%; border-collapse: collapse;
+    border: 2px solid var(--black); border-radius: 12px; overflow: hidden;
+    background: var(--white);
+  }
+  .overview-tbl th, .overview-tbl td {
+    padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .overview-tbl thead { background: var(--black); color: var(--white); }
+  .overview-tbl th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; }
+  .overview-tbl tr:last-child td { border-bottom: none; }
+  .overview-tbl tr:hover td { background: var(--gold-light); }
+  .overview-tbl .col-no { font-family: var(--mono); font-weight: 700; color: var(--gold); -webkit-text-stroke: 0.5px var(--black); width: 60px; }
+  .overview-tbl .col-time { font-family: var(--mono); font-size: 12px; color: var(--gray); width: 90px; }
+  .overview-tbl .col-tier { width: 110px; }
+  .tier-badge {
+    display: inline-block; font-family: var(--mono); font-size: 10px;
+    padding: 3px 8px; border-radius: 4px; font-weight: 700; letter-spacing: 0.08em;
+  }
+  .tier-beg { background: #e8f5e9; color: var(--green); border: 1px solid var(--green); }
+  .tier-mid { background: var(--gold-light); color: #7a6000; border: 1px solid var(--gold-border); }
+  .tier-adv { background: #ffebee; color: var(--red); border: 1px solid var(--red); }
+
+  /* ── Lesson cards ── */
+  .lessons { display: flex; flex-direction: column; gap: 24px; }
+  .lesson {
+    border: 2px solid var(--black); border-radius: 12px; padding: 28px 32px;
+    background: var(--white); transition: box-shadow 0.2s;
+    position: relative;
+  }
+  .lesson:hover { box-shadow: 6px 6px 0 var(--black); }
+  .lesson-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+  .lesson-no {
+    font-family: var(--mono); font-size: 13px; font-weight: 700;
+    background: var(--black); color: var(--gold);
+    padding: 4px 10px; border-radius: 4px; letter-spacing: 0.1em;
+  }
+  .lesson-time {
+    font-family: var(--mono); font-size: 12px; color: var(--gray);
+    border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px;
+  }
+  .lesson-title { font-size: 22px; font-weight: 900; line-height: 1.3; margin-bottom: 18px; }
+  .lesson-row { margin-bottom: 14px; }
+  .lesson-row:last-of-type { margin-bottom: 0; }
+  .lesson-label {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); -webkit-text-stroke: 0.5px var(--black);
+    margin-bottom: 4px; display: block;
+  }
+  .lesson-text { font-size: 14px; color: var(--charcoal); line-height: 1.8; }
+  .lesson-text strong { color: var(--black); font-weight: 700; }
+  .lesson-cases { font-size: 13px; color: var(--charcoal); line-height: 1.85; padding-left: 18px; }
+  .lesson-cases li { margin-bottom: 4px; }
+  .lesson-cases li::marker { color: var(--gold); }
+  .lesson-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border); }
+  .lesson-tag {
+    font-family: var(--mono); font-size: 10px; color: var(--gray);
+    background: var(--gray-light); padding: 4px 8px; border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Author block ── */
+  .author-block {
+    display: flex; gap: 32px; align-items: flex-start;
+    border: 2px solid var(--black); border-radius: 12px; padding: 32px; background: var(--white);
+    margin-bottom: 32px;
+  }
+  .author-avatar {
+    width: 100px; height: 100px; border-radius: 50%;
+    border: 3px solid var(--black);
+    object-fit: cover; object-position: center top;
+    flex-shrink: 0;
+    box-shadow: 4px 4px 0 var(--black);
+  }
+  .author-name { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+  .author-role { font-size: 13px; color: var(--gray); margin-bottom: 12px; font-family: var(--mono); }
+  .author-bio { font-size: 14px; color: var(--charcoal); line-height: 1.85; }
+  .author-bio strong { color: var(--black); font-weight: 700; }
+
+  /* ── Project logo wall ── */
+  .logo-wall {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .logo-item {
+    border: 2px solid var(--black); border-radius: 8px;
+    padding: 14px 16px; background: var(--white);
+    transition: all 0.15s;
+  }
+  .logo-item:hover { background: var(--gold-light); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--black); }
+  .logo-name { font-size: 14px; font-weight: 900; margin-bottom: 2px; }
+  .logo-tag { font-family: var(--mono); font-size: 10px; color: var(--gray); letter-spacing: 0.05em; }
+
+  /* ── FAQ ── */
+  .faq { display: flex; flex-direction: column; gap: 16px; }
+  .faq-item {
+    border: 2px solid var(--black); border-radius: 12px;
+    padding: 20px 24px; background: var(--white);
+  }
+  .faq-q { font-size: 15px; font-weight: 900; margin-bottom: 8px; display: flex; gap: 8px; }
+  .faq-q::before { content: 'Q.'; color: var(--gold); -webkit-text-stroke: 0.5px var(--black); font-family: var(--mono); }
+  .faq-a { font-size: 14px; color: var(--charcoal); line-height: 1.85; padding-left: 28px; }
+
+  /* ── Quote ── */
+  .quote-block {
+    border-left: 4px solid var(--gold); padding: 20px 24px;
+    background: var(--gold-light); border-radius: 0 8px 8px 0; margin: 32px 0;
+  }
+  .quote-text { font-size: 16px; font-weight: 700; line-height: 1.8; color: var(--black); }
+  .quote-attr { font-size: 12px; color: var(--gray); margin-top: 8px; font-family: var(--mono); }
+  .s-black .quote-block { background: rgba(255,201,32,0.1); border-color: var(--gold); }
+  .s-black .quote-text { color: var(--white); }
+
+  /* ── Footer ── */
+  footer { background: var(--black); color: var(--white); padding: 40px 0; text-align: center; }
+  footer .wrap { display: flex; flex-direction: column; gap: 8px; }
+  footer a { color: var(--gold); text-decoration: none; }
+  footer .meta { font-family: var(--mono); font-size: 12px; color: #777; }
+
+  /* ── Responsive ── */
+  @media (max-width: 720px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 20px; }
+    .s-white, .s-gray, .s-black { padding: 48px 0; }
+    .hero { padding: 48px 0 40px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .hstat { border-bottom: 2px solid var(--black); }
+    .hstat:nth-child(3), .hstat:nth-child(4) { border-bottom: none; }
+    .hstat:nth-child(2), .hstat:nth-child(4) { border-right: none; }
+    .lesson { padding: 22px 20px; }
+    .lesson-title { font-size: 18px; }
+    .author-block { flex-direction: column; align-items: center; text-align: center; }
+    .logo-wall { grid-template-columns: repeat(2, 1fr); }
+    .overview-tbl { font-size: 13px; }
+    .overview-tbl th, .overview-tbl td { padding: 10px 8px; }
+    .overview-tbl .col-tier { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div class="wrap">
+    <span class="hero-tag">◆ COURSE OUTLINE · 2026</span>
+    <h1>把 <mark>30 天上線 3 個產品</mark> 的方法論<br>拆成你能照著走的 10 堂課。</h1>
+    <p class="hero-sub">
+      不是教你寫程式，是教你 <strong>怎麼指揮 AI</strong>。<br>
+      從心態、思考協議、技術落地，到上線後的真實世界 —— <br>
+      用我自己做過的 9 個 side project 當教材，每堂 15–30 分鐘可看完。
+    </p>
+
+    <div class="hero-stats">
+      <div class="hstat">
+        <div class="hstat-num">10</div>
+        <div class="hstat-label">堂課</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num">15–30</div>
+        <div class="hstat-label">分鐘 / 堂</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num">9</div>
+        <div class="hstat-label">真實案例</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num">0</div>
+        <div class="hstat-label">手刻程式碼</div>
+      </div>
+    </div>
+
+    <div class="hero-ctas">
+      <a href="#overview" class="btn btn-primary">▼ 看完整課表</a>
+      <a href="https://rai0603.github.io/ai-dev-notes/" class="btn btn-ghost">⌘ 回到主站</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MANIFESTO ═══════════ -->
+<section class="s-gold">
+  <div class="wrap">
+    <p style="font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; margin-bottom: 14px;">◆ WHY THIS COURSE</p>
+    <p style="font-size: 20px; font-weight: 900; line-height: 1.6;">
+      過去 6 個月，我用 Claude Code 上線了 9 個 side project。<br>
+      不是天賦，是<u>一套可重複的協作流程</u>。<br>
+      這門課就是把那套流程，用我親自踩過的坑與決策，<strong>講給下一個你聽</strong>。
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ COURSE OVERVIEW ═══════════ -->
+<section class="s-white" id="overview">
+  <div class="wrap">
+    <span class="eyebrow">◆ 01 / Overview</span>
+    <h2 class="sec-title">課程節奏總覽</h2>
+    <p class="sec-sub">10 堂課按「心態 → 協議 → 實作 → 排錯 → 累積」遞進，每堂可獨立看，也能照順序走完一整套 SOP。</p>
+
+    <table class="overview-tbl">
+      <thead>
+        <tr>
+          <th class="col-no">No.</th>
+          <th>主題</th>
+          <th class="col-time">時長</th>
+          <th class="col-tier">難度</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="col-no">L1</td><td>為什麼現在是最好的時機 — Vibe Coding 的世界觀</td><td class="col-time">20 min</td><td><span class="tier-badge tier-beg">入門</span></td></tr>
+        <tr><td class="col-no">L2</td><td>你的開發分身 — Claude Code 工具鏈基礎設施</td><td class="col-time">25 min</td><td><span class="tier-badge tier-beg">入門</span></td></tr>
+        <tr><td class="col-no">L3</td><td>思考協議 — 從「我想做一個 XX」到可執行規格</td><td class="col-time">30 min</td><td><span class="tier-badge tier-beg">入門</span></td></tr>
+        <tr><td class="col-no">L4</td><td>開新專案的第一個小時 — 目錄、CLAUDE.md、基線</td><td class="col-time">25 min</td><td><span class="tier-badge tier-mid">新手</span></td></tr>
+        <tr><td class="col-no">L5</td><td>前端落地 — 從零到能點的 MVP 介面</td><td class="col-time">30 min</td><td><span class="tier-badge tier-mid">新手</span></td></tr>
+        <tr><td class="col-no">L6</td><td>後端落地 — Supabase 為何是 80% 個人專案最佳解</td><td class="col-time">30 min</td><td><span class="tier-badge tier-mid">新手</span></td></tr>
+        <tr><td class="col-no">L7</td><td>部署 — 免費起步 → 付費階梯</td><td class="col-time">25 min</td><td><span class="tier-badge tier-mid">新手</span></td></tr>
+        <tr><td class="col-no">L8</td><td>AI 寫的 code 卡住時 — 8-Step Bugfix Protocol</td><td class="col-time">30 min</td><td><span class="tier-badge tier-adv">中階</span></td></tr>
+        <tr><td class="col-no">L9</td><td>上線之後 — 從 0 用戶到 100 用戶的觀察與商業化判斷</td><td class="col-time">30 min</td><td><span class="tier-badge tier-adv">中階</span></td></tr>
+        <tr><td class="col-no">L10</td><td>1→N — 把 side project 做成可累積的資產</td><td class="col-time">25 min</td><td><span class="tier-badge tier-adv">中階</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ LESSONS ═══════════ -->
+<section class="s-gray" id="lessons">
+  <div class="wrap">
+    <span class="eyebrow">◆ 02 / Curriculum</span>
+    <h2 class="sec-title">10 堂課的核心主題與教學目標</h2>
+    <p class="sec-sub">每堂都包含「核心主題、教學目標、真實案例」三段。真實案例全部來自我自己上線的專案，不是教科書範例。</p>
+
+    <div class="lessons">
+
+      <!-- L1 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L1</span>
+          <span class="lesson-time">⏱ 20 min · 入門</span>
+        </div>
+        <h3 class="lesson-title">為什麼現在是最好的時機 — Vibe Coding 的世界觀</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">從「程式工人」到「方向決定者」的角色轉變。你不是在學寫 code，是在學<strong>指揮 AI</strong> 寫 code。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能說出 Vibe Coding 三要素（電腦、耐心、好奇心），並理解為什麼非科班出身的人現在反而更有優勢。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>水行者預約系統 2 天上線、十年 WooCommerce 對比</li>
+            <li>同一個問題用傳統開發 vs Vibe Coding 的時程差</li>
+            <li>省下 NT$50,000 + 十年心智耗損的真實財務影響</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#心理門檻</span>
+          <span class="lesson-tag">#非科班</span>
+          <span class="lesson-tag">#工程師角色重定義</span>
+        </div>
+      </article>
+
+      <!-- L2 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L2</span>
+          <span class="lesson-time">⏱ 25 min · 入門</span>
+        </div>
+        <h3 class="lesson-title">你的開發分身 — Claude Code 工具鏈基礎設施</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">把 AI 變成<strong>「會記得你怎麼工作」</strong>的協作者。一份好的 CLAUDE.md，能讓 AI 從工具變成分身。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能寫出第一份全域 CLAUDE.md，並理解 skill / subagent / MCP 各自扮演什麼角色、什麼時候該用哪一個。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>Rai 自己的 CLAUDE.md「開發分身 Manifesto」三段結構（身份 → 原則 → 偏好）</li>
+            <li>用 feedback memory 讓 AI 不會把同一個錯誤犯第二次</li>
+            <li>MCP 連 Supabase / GitHub 的真實效率差</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#CLAUDE.md</span>
+          <span class="lesson-tag">#skill</span>
+          <span class="lesson-tag">#MCP</span>
+          <span class="lesson-tag">#API key 安全</span>
+        </div>
+      </article>
+
+      <!-- L3 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L3</span>
+          <span class="lesson-time">⏱ 30 min · 入門</span>
+        </div>
+        <h3 class="lesson-title">思考協議 — 從「我想做一個 XX」到可執行規格</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">用四階段協議把模糊願望變成 AI 能執行的工作項。<strong>不要讓 AI 一上來就寫 code</strong>，先把問題聊清楚。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能對任何新需求跑完 Phase 1 (釐清) → Phase 2 (架構) → Phase 3 (規格) → Phase 4 (實作) 的協議流程。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>現場示範：把「我想做一個寵物社群」跑完四階段</li>
+            <li>用 AI 挑戰自己的隱性假設（避免 AI 一味迎合）</li>
+            <li>三方案比較 vs 直接做的取捨</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#MVP 邊界</span>
+          <span class="lesson-tag">#YAGNI 煞車</span>
+          <span class="lesson-tag">#需求拆解</span>
+        </div>
+      </article>
+
+      <!-- L4 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L4</span>
+          <span class="lesson-time">⏱ 25 min · 新手</span>
+        </div>
+        <h3 class="lesson-title">開新專案的第一個小時 — 目錄、CLAUDE.md、基線</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">每個專案要有的開場儀式，省下後面 <strong>80% 的重來</strong>。架構在第一個小時決定，不是在第一百個小時。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能在 60 分鐘內建好新專案的目錄分層、專案 CLAUDE.md、.env.example、Git 基線。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>Controller → Service → Repository 三層的具體檔案結構</li>
+            <li>TypeScript 嚴格 + Zod 驗證 + Result Pattern 的最小範本</li>
+            <li>DiDiPo / AICMS 的開頭設定對照</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#禁用 any</span>
+          <span class="lesson-tag">#Result Pattern</span>
+          <span class="lesson-tag">#專案 CLAUDE.md</span>
+        </div>
+      </article>
+
+      <!-- L5 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L5</span>
+          <span class="lesson-time">⏱ 30 min · 新手</span>
+        </div>
+        <h3 class="lesson-title">前端落地 — 從零到能點的 MVP 介面</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">Vite + React + Tailwind + shadcn/ui 為何是最快組合，以及<strong>怎麼跟 AI 描述介面</strong>才不會生出醜東西。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能用結構化方式描述 UI 需求，做出響應式、深色模式、動畫流暢的頁面。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>DiDiPo 儀表板 7-Tab 帳號管理頁的拆解</li>
+            <li>AICMS admin UI 的元件複用策略</li>
+            <li>ai-match 名片頁用 ISR 砍 90% Supabase egress</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#shadcn/ui</span>
+          <span class="lesson-tag">#a11y</span>
+          <span class="lesson-tag">#ISR</span>
+          <span class="lesson-tag">#深色模式</span>
+        </div>
+      </article>
+
+      <!-- L6 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L6</span>
+          <span class="lesson-time">⏱ 30 min · 新手</span>
+        </div>
+        <h3 class="lesson-title">後端落地 — Supabase 為何是 80% 個人專案最佳解</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">Auth + RLS + Edge Functions + Storage 一站式的設計與陷阱。為什麼<strong>「讀靠 RLS、寫靠 API + service role」</strong>是穩定策略。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能規劃出一份權限分層清楚的 Supabase 架構，並避開 RLS 與業務邏輯混在一起的常見陷阱。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>ai-match 多名片功能的 RLS 設計</li>
+            <li>DiDiPo Edge Function 部署 SOP（含 <code>--no-verify-jwt</code> 為什麼是預設）</li>
+            <li>Supabase 新版 API key 遷移（<code>sb_publishable_</code> / <code>sb_secret_</code>）— 沒換掉會讓 OAuth 全炸</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#Supabase</span>
+          <span class="lesson-tag">#RLS</span>
+          <span class="lesson-tag">#Edge Functions</span>
+          <span class="lesson-tag">#新版 API key</span>
+        </div>
+      </article>
+
+      <!-- L7 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L7</span>
+          <span class="lesson-time">⏱ 25 min · 新手</span>
+        </div>
+        <h3 class="lesson-title">部署 — 免費起步 → 付費階梯</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">GitHub Pages / Cloudflare Pages / Zeabur 的選擇樹，以及真實月費結構。<strong>不要一開始就花錢</strong>，但也要知道什麼時候該花。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能根據專案類型（純前端 / SSR / Next.js）選對部署平台、估算出大致月費。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>9 個專案的部署對照表（GitHub Pages / Zeabur / Cloudflare Pages）</li>
+            <li>為什麼選 Zeabur 不選 Vercel（地理位置 + 定價模型）</li>
+            <li>CF Pages Functions 在 Zeabur 是死碼 — 一個我踩過才知道的陷阱</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#GitHub Pages</span>
+          <span class="lesson-tag">#Cloudflare</span>
+          <span class="lesson-tag">#Zeabur</span>
+          <span class="lesson-tag">#月費結構</span>
+        </div>
+      </article>
+
+      <!-- L8 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L8</span>
+          <span class="lesson-time">⏱ 30 min · 中階</span>
+        </div>
+        <h3 class="lesson-title">AI 寫的 code 卡住時 — 8-Step Bugfix Protocol</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">禁止<strong>「沒 failing test 就 patch」</strong>。把 debug 變成可重複的 SOP，避免你跟 AI 一起在錯誤的方向上越跑越遠。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員遇到 bug 時能跑完 8 步：最小重現 → failing test → 根因 → 最小修復 → regression → spec → review → report。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>SPA Fallback 誤判存在（fetch llms.txt 回 200 但其實是 index.html）</li>
+            <li>Supabase Edge Function OAuth 401（部署要加 <code>--no-verify-jwt</code>）</li>
+            <li>OAuth Callback 跳 localhost（Zeabur reverse proxy 要讀 <code>x-forwarded-host</code>）</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#Bugfix Protocol</span>
+          <span class="lesson-tag">#failing test</span>
+          <span class="lesson-tag">#不要順手重構</span>
+          <span class="lesson-tag">#scope 控制</span>
+        </div>
+      </article>
+
+      <!-- L9 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L9</span>
+          <span class="lesson-time">⏱ 30 min · 中階</span>
+        </div>
+        <h3 class="lesson-title">上線之後 — 從 0 用戶到 100 用戶的觀察與商業化判斷</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">產品上線只是起點。<strong>怎麼跟真實使用者互動</strong>、收 feedback、決定何時開始收錢，這堂講完。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員能規劃 analytics、設計 feedback channel、判斷自己的產品有沒有走到「該收費」的時機點。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>AICMS 自建 Analytics（per-tenant + 跨站 + 縣市 + 退出頁）取代 GA4</li>
+            <li>CitableRank AI 客服 widget + LINE 真人轉接</li>
+            <li><strong>金流四連坑決策樹</strong>：藍新（卡 1 個月）→ Stripe（台灣無法）→ Lemon（拒 SaaS）→ Paddle（最終解）</li>
+            <li>Paddle webhook <code>subscription.canceled</code> 沒 <code>current_billing_period</code> 的防禦</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#Analytics</span>
+          <span class="lesson-tag">#Paddle</span>
+          <span class="lesson-tag">#Meta App Review</span>
+          <span class="lesson-tag">#in-app browser</span>
+          <span class="lesson-tag">#feedback channel</span>
+        </div>
+      </article>
+
+      <!-- L10 -->
+      <article class="lesson">
+        <div class="lesson-head">
+          <span class="lesson-no">L10</span>
+          <span class="lesson-time">⏱ 25 min · 中階</span>
+        </div>
+        <h3 class="lesson-title">1→N — 把 side project 做成可累積的資產</h3>
+        <div class="lesson-row">
+          <span class="lesson-label">核心主題</span>
+          <p class="lesson-text">為什麼要持續做？怎麼把每個專案變成下一個的素材。<strong>你的品牌就是你的踩坑紀錄</strong>。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">教學目標</span>
+          <p class="lesson-text">學員理解「品牌＝踩坑紀錄」的長線邏輯，並能設計自己的 cross-project learning 系統。</p>
+        </div>
+        <div class="lesson-row">
+          <span class="lesson-label">真實案例</span>
+          <ul class="lesson-cases">
+            <li>ai-dev-notes 的敘事演化（30 天 3 產品 → 9 產品）</li>
+            <li>sync-learnings 自動歸納跨專案經驗</li>
+            <li>memory system（feedback_*.md）的累積方式</li>
+            <li>從個人 (零時生存) → B2C (ai-match) → B2B (CitableRank、AICMS) 的演化</li>
+          </ul>
+        </div>
+        <div class="lesson-tags">
+          <span class="lesson-tag">#開發筆記</span>
+          <span class="lesson-tag">#跨專案學習</span>
+          <span class="lesson-tag">#生態系</span>
+          <span class="lesson-tag">#個人品牌</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ INSTRUCTOR ═══════════ -->
+<section class="s-white">
+  <div class="wrap">
+    <span class="eyebrow">◆ 03 / Instructor</span>
+    <h2 class="sec-title">關於講師</h2>
+    <p class="sec-sub">不是來教書的工程師，是邊做產品邊整理筆記的開發者。</p>
+
+    <div class="author-block">
+      <img src="../rai.jpg" alt="Rai" class="author-avatar" onerror="this.style.display='none'">
+      <div>
+        <div class="author-name">陳建文（Rai）</div>
+        <div class="author-role">FOUNDER · WATERMAN SPORTS · INDIE MAKER</div>
+        <p class="author-bio">
+          台灣水上活動教練出身，後期轉做 AI 產品。<br>
+          過去 6 個月用 Claude Code 上線 <strong>9 個 side project</strong>，從個人工具、B2C SaaS 到 B2B 平台都跑過一遍。<br>
+          這門課的內容全部來自<strong>實戰過、上線過、有人付費過</strong>的真實經驗，不是教科書範例。
+        </p>
+      </div>
+    </div>
+
+    <p style="font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: var(--gray); margin-bottom: 16px;">◆ 9 個專案 / 已上線</p>
+    <div class="logo-wall">
+      <div class="logo-item"><div class="logo-name">DiDiPo</div><div class="logo-tag">AI 社群自動發文 SaaS</div></div>
+      <div class="logo-item"><div class="logo-name">IQ Suite</div><div class="logo-tag">多測驗 SaaS 平台</div></div>
+      <div class="logo-item"><div class="logo-name">零時生存</div><div class="logo-tag">災難應變問答遊戲</div></div>
+      <div class="logo-item"><div class="logo-name">CitableRank</div><div class="logo-tag">繁中 GEO 分析工具</div></div>
+      <div class="logo-item"><div class="logo-name">AI 妹嘻</div><div class="logo-tag">職人數位名片</div></div>
+      <div class="logo-item"><div class="logo-name">AICMS</div><div class="logo-tag">AEO/GEO 多租戶 CMS</div></div>
+      <div class="logo-item"><div class="logo-name">水行者預約</div><div class="logo-tag">零成本預約系統</div></div>
+      <div class="logo-item"><div class="logo-name">長坂血路</div><div class="logo-tag">2.5D Roguelite 遊戲</div></div>
+      <div class="logo-item"><div class="logo-name">ai-dev-notes</div><div class="logo-tag">開發筆記網站</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ QUOTE ═══════════ -->
+<section class="s-black">
+  <div class="wrap">
+    <div class="quote-block">
+      <p class="quote-text">
+        「我不是天才。我只是把每次踩坑都記下來，<br>
+        然後讓我的 AI 開發分身永遠不會犯第二次。」
+      </p>
+      <p class="quote-attr">— Rai · 2026</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FAQ ═══════════ -->
+<section class="s-gray">
+  <div class="wrap">
+    <span class="eyebrow">◆ 04 / FAQ</span>
+    <h2 class="sec-title">常見問題</h2>
+    <p class="sec-sub">開始前你可能會想知道的事。</p>
+
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q">這門課適合誰？</div>
+        <p class="faq-a">想用 AI 加速做產品的人 —— 不論你是工程師、PM、設計師、創業者，還是完全的程式新手。<strong>有好奇心比有程式知識更重要。</strong>本課程不會教你 if/else 語法，會教你怎麼把模糊想法變成可上線的東西。</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">完全不會寫程式可以學嗎？</div>
+        <p class="faq-a">可以，但建議你願意花時間「看懂」AI 寫出來的程式碼在做什麼。本課程不要求你動手寫，但要求你能<strong>判斷對錯</strong>—— 這也是 Vibe Coding 的核心能力。</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">需要先安裝什麼工具？</div>
+        <p class="faq-a">最低配置：一台電腦（Mac / Windows / Linux 都行）、Claude Code CLI、一個文字編輯器（VS Code 或 Cursor）。第 2 堂課會帶你一步步裝起來。</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">技術棧有限制嗎？</div>
+        <p class="faq-a">課程以 TypeScript / React / Supabase 為主軸（我自己的主力技術），但<strong>方法論本身與技術棧無關</strong>。你用 Python / Go / Rust 也能套同樣的思考協議與 bugfix SOP。</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">看完 10 堂課我能做出什麼？</div>
+        <p class="faq-a">一個能上線的最小可行產品（MVP）。可能是個人工具、給朋友用的小服務、或自家事業的內部系統。重點不是「做出 SaaS 帝國」，而是<strong>從 0 到 1 走完一次完整流程</strong>，把那條路徑刻進你的肌肉記憶。</p>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">有售後支援嗎？</div>
+        <p class="faq-a">目前以課程內容為主。如果有具體案例想討論，可以 email 我：<a href="mailto:rai0603@gmail.com" style="color: var(--black); font-weight: 700;">rai0603@gmail.com</a>。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="wrap">
+    <p style="font-size: 16px; font-weight: 700;">Rai · Vibe Coding 實戰課</p>
+    <p class="meta">2026 · 用 Claude Code 打造 / <a href="https://rai0603.github.io/ai-dev-notes/">ai-dev-notes</a> · <a href="mailto:rai0603@gmail.com">rai0603@gmail.com</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
