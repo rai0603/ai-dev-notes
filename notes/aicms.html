@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我想喝一杯牛奶，最後卻蓋了一座牧場 — AICMS 開發日記</title>
+<meta name="description" content="從一個自家網站需求出發，4 週做出 AEO/GEO 結構優先的多租戶 CMS 平台。AICMS 完整開發故事、8 大痛點對照、開發甘特圖。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #FFC920;
+    --gold-light: #FFF8DC;
+    --gold-border: #e5c800;
+    --black: #111111;
+    --charcoal: #3a3a3a;
+    --gray: #555555;
+    --gray-mid: #888;
+    --gray-light: #f7f7f7;
+    --border: #e8e8e8;
+    --white: #ffffff;
+    --cyan: #00b8a0;
+    --red: #e53935;
+    --green: #2e7d32;
+    --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    --mono: 'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--white); color: var(--black); font-family: var(--sans); font-size: 18px; line-height: 1.85; }
+  a { color: inherit; }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── Sections ── */
+  .s-white  { background: var(--white); padding: 72px 0; }
+  .s-gray   { background: var(--gray-light); padding: 72px 0; }
+  .s-black  { background: var(--black); padding: 72px 0; color: var(--white); }
+  .s-gold   { background: var(--gold); padding: 56px 0; }
+  .divider  { height: 2px; background: var(--black); }
+
+  /* ── Top nav ── */
+  .topnav { border-bottom: 2px solid var(--black); background: var(--white); padding: 14px 0; }
+  .topnav-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .topnav-back { font-family: var(--mono); font-size: 12px; font-weight: 700; text-decoration: none; color: var(--black); border-bottom: 1.5px solid var(--gold); padding-bottom: 1px; }
+  .topnav-back:hover { color: var(--gold); border-color: var(--black); }
+  .topnav-meta { font-family: var(--mono); font-size: 11px; color: var(--gray); letter-spacing: 0.1em; }
+
+  /* ── Section labels ── */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.2em; color: var(--gray); margin-bottom: 12px; text-transform: uppercase;
+  }
+  .eyebrow::before { content: ''; display: inline-block; width: 20px; height: 2px; background: var(--gold); }
+  .s-black .eyebrow { color: #999; }
+  .s-black .eyebrow::before { background: var(--gold); }
+
+  .sec-title { font-size: 28px; font-weight: 900; line-height: 1.3; margin-bottom: 8px; }
+  .sec-sub   { font-size: 15px; color: var(--gray); margin-bottom: 40px; line-height: 1.7; }
+  .s-black .sec-title { color: var(--white); }
+  .s-black .sec-sub   { color: #999; }
+
+  /* ── Hero ── */
+  .hero { background: var(--white); padding: 72px 0 64px; border-bottom: 2px solid var(--black); }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--black); color: var(--gold);
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.15em; padding: 6px 14px; border-radius: 4px; margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 50px); font-weight: 900; line-height: 1.2;
+    letter-spacing: -0.02em; margin-bottom: 20px;
+  }
+  .hero h1 mark { background: var(--gold); color: var(--black); padding: 0 6px; border-radius: 3px; font-style: normal; }
+  .hero-sub { font-size: 16px; color: var(--gray); line-height: 1.95; max-width: 680px; margin-bottom: 36px; }
+
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    border: 2px solid var(--black); border-radius: 12px; overflow: hidden;
+  }
+  .hstat { padding: 20px 14px; border-right: 2px solid var(--black); text-align: center; background: var(--white); }
+  .hstat:last-child { border-right: none; }
+  .hstat-num { font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 5px; color: var(--black); }
+  .hstat:nth-child(1) .hstat-num,
+  .hstat:nth-child(5) .hstat-num { color: var(--gold); -webkit-text-stroke: 1px var(--black); }
+  .hstat-label { font-size: 11px; color: var(--gray); font-weight: 500; }
+
+  .hero-cta { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--black); color: var(--gold); padding: 12px 22px;
+    border: 2px solid var(--black); border-radius: 6px;
+    font-family: var(--mono); font-size: 13px; font-weight: 700; text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--gold); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--black); padding: 12px 22px;
+    border: 2px solid var(--black); border-radius: 6px;
+    font-family: var(--mono); font-size: 13px; font-weight: 700; text-decoration: none;
+    transition: background 0.15s;
+  }
+  .btn-ghost:hover { background: var(--gold-light); }
+
+  /* ── Story arc ── */
+  .story-stages { display: flex; flex-direction: column; gap: 0; border: 2px solid var(--black); border-radius: 12px; overflow: hidden; }
+  .stage { display: flex; gap: 0; border-bottom: 2px solid var(--black); }
+  .stage:last-child { border-bottom: none; }
+  .stage-mark { width: 88px; flex-shrink: 0; background: var(--black); color: var(--gold); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 8px; font-family: var(--mono); }
+  .stage-mark-icon { font-size: 26px; margin-bottom: 6px; }
+  .stage-mark-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-align: center; line-height: 1.4; }
+  .stage-body { padding: 22px 26px; flex: 1; background: var(--white); }
+  .stage:nth-child(2) .stage-body { background: var(--gold-light); }
+  .stage:nth-child(3) .stage-body { background: var(--white); }
+  .stage-title { font-size: 17px; font-weight: 900; margin-bottom: 8px; }
+  .stage-text { font-size: 14px; color: var(--charcoal); line-height: 1.85; }
+  .stage-text strong { color: var(--black); font-weight: 700; background: rgba(255,201,32,0.35); padding: 0 3px; border-radius: 3px; }
+
+  /* ── Quote ── */
+  .quote-block {
+    border-left: 4px solid var(--gold); padding: 20px 24px;
+    background: var(--gold-light); border-radius: 0 8px 8px 0; margin: 32px 0 0;
+  }
+  .quote-text { font-size: 16px; font-weight: 700; line-height: 1.8; color: var(--black); }
+  .quote-attr { font-size: 12px; color: var(--gray); margin-top: 8px; font-family: var(--mono); }
+
+  /* ── Pain card ── */
+  .pain-list { display: flex; flex-direction: column; gap: 22px; }
+  .pain-card { border: 2px solid var(--black); border-radius: 14px; overflow: hidden; background: var(--white); transition: box-shadow 0.2s; }
+  .pain-card:hover { box-shadow: 6px 6px 0 var(--black); }
+  .pain-head { padding: 18px 26px; background: var(--black); color: var(--gold); display: flex; gap: 18px; align-items: center; }
+  .pain-num { font-family: var(--mono); font-size: 22px; font-weight: 700; line-height: 1; color: var(--gold); flex-shrink: 0; min-width: 50px; }
+  .pain-title { font-size: 17px; font-weight: 900; color: var(--white); line-height: 1.4; }
+  .pain-body { padding: 22px 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .pain-col-title { font-family: var(--mono); font-size: 10px; color: var(--gray); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; font-weight: 700; }
+  .pain-col-title.problem { color: var(--red); }
+  .pain-col-title.solution { color: var(--green); }
+  .pain-text { font-size: 14px; color: var(--charcoal); line-height: 1.85; }
+  .pain-text strong { color: var(--black); font-weight: 700; }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+  .feature-list li { font-size: 13px; color: var(--charcoal); display: flex; align-items: flex-start; gap: 8px; line-height: 1.7; }
+  .feature-list li::before { content: '▸'; color: var(--gold); flex-shrink: 0; font-size: 12px; margin-top: 3px; -webkit-text-stroke: 0.5px var(--black); }
+  .feature-list li strong { color: var(--black); font-weight: 700; }
+
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .tag { font-family: var(--mono); font-size: 11px; padding: 3px 9px; border-radius: 4px; border: 1.5px solid var(--border); color: var(--gray); background: var(--gray-light); }
+  .tag.hl { border-color: var(--black); color: var(--black); background: var(--gold-light); font-weight: 700; }
+
+  .pain-screenshot { grid-column: 1 / -1; margin-top: 8px; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; background: #f0f0f0; }
+  .pain-screenshot img { width: 100%; display: block; }
+  .pain-screenshot-caption { font-family: var(--mono); font-size: 11px; color: var(--gray); padding: 8px 12px; background: var(--gray-light); border-top: 1px solid var(--border); text-align: center; }
+
+  .pain-placeholder { grid-column: 1 / -1; margin-top: 8px; border: 1.5px dashed var(--gray-mid); border-radius: 8px; padding: 24px; text-align: center; background: var(--gray-light); }
+  .pain-placeholder-icon { font-size: 28px; margin-bottom: 6px; }
+  .pain-placeholder-text { font-family: var(--mono); font-size: 11px; color: var(--gray); letter-spacing: 0.05em; }
+
+  .phone-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 8px; }
+  .phone-frame { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--white); }
+  .phone-frame img { width: 100%; display: block; }
+  .phone-caption { font-family: var(--mono); font-size: 10px; color: var(--gray); padding: 6px 8px; text-align: center; background: var(--gray-light); border-top: 1px solid var(--border); }
+
+  /* ── Gantt ── */
+  .gantt-wrap { border: 2px solid var(--black); border-radius: 12px; overflow: hidden; background: var(--white); }
+  .gantt-head { display: grid; grid-template-columns: 180px repeat(4, 1fr); background: var(--black); color: var(--gold); }
+  .gantt-head-cell { padding: 12px 14px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; border-right: 1px solid #333; text-align: center; }
+  .gantt-head-cell:first-child { text-align: left; }
+  .gantt-head-cell:last-child { border-right: none; }
+  .gantt-head-date { display: block; font-size: 9px; color: #aaa; font-weight: 400; margin-top: 2px; letter-spacing: 0.05em; }
+
+  .gantt-row { display: grid; grid-template-columns: 180px repeat(4, 1fr); border-top: 1px solid var(--border); position: relative; min-height: 44px; align-items: center; }
+  .gantt-row:nth-child(even) { background: var(--gray-light); }
+  .gantt-label { padding: 12px 14px; font-size: 13px; font-weight: 700; color: var(--black); border-right: 1px solid var(--border); height: 100%; display: flex; align-items: center; gap: 8px; }
+  .gantt-label-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--gold); border: 2px solid var(--black); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; }
+
+  .gantt-cells { grid-column: 2 / 6; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; padding: 8px 6px; gap: 0; height: 100%; }
+  .gantt-cell { border-right: 1px dashed var(--border); height: 100%; }
+  .gantt-cell:last-child { border-right: none; }
+
+  .gantt-bar { position: absolute; top: 50%; transform: translateY(-50%); height: 26px; background: var(--gold); border: 2px solid var(--black); border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 2px 2px 0 var(--black); }
+  .gantt-bar.dark { background: var(--black); color: var(--gold); box-shadow: 2px 2px 0 var(--gold); }
+  .gantt-bar.cyan { background: #d0fffa; border-color: #008c7a; color: #006a5e; box-shadow: 2px 2px 0 #008c7a; }
+
+  .gantt-legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 16px; padding: 14px 18px; background: var(--gray-light); border: 1.5px solid var(--border); border-radius: 8px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--charcoal); }
+  .legend-swatch { width: 18px; height: 12px; border: 2px solid var(--black); border-radius: 3px; }
+  .legend-swatch.gold { background: var(--gold); }
+  .legend-swatch.dark { background: var(--black); }
+  .legend-swatch.cyan { background: #d0fffa; border-color: #008c7a; }
+
+  /* ── Milestone list ── */
+  .milestones { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 24px; }
+  .ms-card { border: 1.5px solid var(--black); border-radius: 10px; padding: 16px 18px; background: var(--white); }
+  .ms-date { font-family: var(--mono); font-size: 11px; color: var(--gold); -webkit-text-stroke: 0.5px var(--black); font-weight: 700; margin-bottom: 6px; }
+  .ms-title { font-size: 14px; font-weight: 900; color: var(--black); margin-bottom: 4px; }
+  .ms-text { font-size: 12px; color: var(--charcoal); line-height: 1.7; }
+
+  /* ── CTA closing ── */
+  .closing-card {
+    border: 2px solid var(--gold); border-radius: 14px; padding: 36px 40px;
+    background: rgba(255,201,32,0.06); text-align: center;
+  }
+  .closing-h { font-size: clamp(22px, 3.4vw, 30px); font-weight: 900; color: var(--white); margin-bottom: 12px; }
+  .closing-p { font-size: 14px; color: #aaa; margin-bottom: 24px; line-height: 1.85; }
+  .closing-link { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--black); padding: 14px 28px; border-radius: 8px; font-family: var(--mono); font-size: 14px; font-weight: 700; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; }
+  .closing-link:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--gold); }
+
+  /* ── Footer ── */
+  .pgfoot { padding: 32px 0; background: var(--black); color: #888; text-align: center; font-family: var(--mono); font-size: 12px; }
+  .pgfoot a { color: var(--gold); text-decoration: none; border-bottom: 1px solid #333; }
+
+  /* ── Fade ── */
+  .fade { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .fade.in { opacity: 1; transform: none; }
+  .d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.16s; } .d3 { transition-delay: 0.24s; } .d4 { transition-delay: 0.32s; }
+
+  /* ── Responsive ── */
+  @media (max-width: 720px) {
+    .hero-stats { grid-template-columns: repeat(3, 1fr); }
+    .hero-stats .hstat:nth-child(4),
+    .hero-stats .hstat:nth-child(5) { border-top: 2px solid var(--black); }
+    .pain-body { grid-template-columns: 1fr; }
+    .milestones { grid-template-columns: 1fr; }
+    .phone-grid { grid-template-columns: 1fr; }
+    .gantt-head { grid-template-columns: 110px repeat(4, 1fr); font-size: 10px; }
+    .gantt-row { grid-template-columns: 110px repeat(4, 1fr); }
+    .gantt-label { font-size: 11px; padding: 10px 8px; }
+    .gantt-bar { font-size: 9px; padding: 0 6px; height: 22px; }
+    .stage { flex-direction: column; }
+    .stage-mark { width: 100%; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 12px 18px; }
+    .stage-mark-icon { font-size: 20px; margin-bottom: 0; }
+    .stage-mark-tag { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── TOP NAV ── -->
+<nav class="topnav">
+  <div class="wrap topnav-row">
+    <a class="topnav-back" href="../">← 回到開發筆記首頁</a>
+    <span class="topnav-meta">NOTE · AICMS · 2026-05</span>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-tag">PROJECT 06 · 開發故事</div>
+    <h1>
+      我想喝一杯<mark>牛奶</mark>，<br>
+      最後卻蓋了一座<mark>牧場</mark>
+    </h1>
+    <p class="hero-sub">
+      五月初，我只想做一個能搞定 GEO/SEO 維護、預約、排班、AI 客服的網站。一個月後，我做出來的是
+      <strong style="color:var(--black);">一個 AEO/GEO 結構優先的多租戶 CMS 平台</strong>——
+      換句話說，一個 WordPress 的當代替代品。這頁是這場「需求漂移」的完整紀錄。
+    </p>
+    <div class="hero-stats fade">
+      <div class="hstat"><div class="hstat-num">4</div><div class="hstat-label">開發週數</div></div>
+      <div class="hstat"><div class="hstat-num">8</div><div class="hstat-label">解決的痛點</div></div>
+      <div class="hstat"><div class="hstat-num">4</div><div class="hstat-label">完成外掛</div></div>
+      <div class="hstat"><div class="hstat-num">3</div><div class="hstat-label">獨立 App</div></div>
+      <div class="hstat"><div class="hstat-num">1</div><div class="hstat-label">座牧場</div></div>
+    </div>
+    <div class="hero-cta">
+      <a class="btn-primary" href="https://ai-cms.cc" target="_blank" rel="noopener">看看牧場長什麼樣 → ai-cms.cc</a>
+      <a class="btn-ghost" href="#gantt">直接看開發甘特圖</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── STORY ── -->
+<section class="s-white">
+  <div class="wrap">
+    <div class="eyebrow">需求漂移實錄</div>
+    <h2 class="sec-title">從「我自己要用」變成「整個平台都要做」</h2>
+    <p class="sec-sub">這三個階段是真實發生過的內心對話，沒有事後美化。</p>
+
+    <div class="story-stages fade">
+      <div class="stage">
+        <div class="stage-mark">
+          <div class="stage-mark-icon">🥛</div>
+          <div class="stage-mark-tag">STAGE 1<br>2026-05-03</div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-title">原本只想做一杯牛奶</div>
+          <div class="stage-text">
+            我經營水行者海洋運動中心 17 年，需求其實很單純——做一個網站幫我處理
+            <strong>GEO/SEO 日常維護</strong>、設計一套符合水上產業需求的
+            <strong>預約系統 + 排班系統</strong>，再加上一個能直接下單的 <strong>AI 客服</strong>。
+            這就是最初的待辦清單，看起來一個月內可以收工。
+          </div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-mark">
+          <div class="stage-mark-icon">🤔</div>
+          <div class="stage-mark-tag">STAGE 2<br>2026-05-06</div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-title">轉折：每做一個新網站都要重跑一次？</div>
+          <div class="stage-text">
+            做到第三天我意識到一件事：這套東西如果只服務自家，
+            <strong>未來每接一個新網站就要把這些工作重做一遍</strong>，非常繁瑣，
+            還要燒掉大量 Claude tokens。同時我也想念以前 WordPress 那種
+            「進去後台就能改頁面」的 no-code 體驗——
+            <strong>未來蓋新網站時不該還要 Claude / Codex 來編輯頁面內容外觀</strong>。
+          </div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-mark">
+          <div class="stage-mark-icon">🐄</div>
+          <div class="stage-mark-tag">STAGE 3<br>2026-05-07</div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-title">那就蓋一座牧場吧</div>
+          <div class="stage-text">
+            既然要做，就做成<strong>一個 WordPress 等級的原生架站平台</strong>——
+            而且骨子裡是 AEO/GEO 結構優先，不是給人看的頁面為主、AI 友善為輔。
+            把預約 / 排班 / AI 客服都做成可掛可拆的<strong>外掛</strong>，
+            把上線流程（DNS / 部署 / GSC 索引）全部塞進精靈裡。
+            原本想喝的那杯牛奶，變成牧場裡的一個出貨環節。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <div class="quote-text">「決定不做點功能很容易，難的是決定不躲過該做的東西。當我看見『重複勞動』在未來會發生，逃避它的成本比正面解決它還高。」</div>
+      <div class="quote-attr">— Rai · 2026-05-07 的決策筆記</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PAIN POINTS ── -->
+<div class="divider"></div>
+<section class="s-gray">
+  <div class="wrap">
+    <div class="eyebrow">8 大痛點 × 解決方案</div>
+    <h2 class="sec-title">從需求出發，逐一解決</h2>
+    <p class="sec-sub">每一張卡片左邊是「我在自家網站遇到的真實痛點」，右邊是「在 AICMS 裡用什麼方式解決」。</p>
+
+    <div class="pain-list">
+
+      <!-- PAIN 01 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">01</div>
+          <div class="pain-title">架站 SEO / GEO 從零設定 + 舊站資料移轉</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              新網站要重做 metadata、schema、breadcrumb、sitemap、robots、open graph、AEO 結構標記……
+              更痛的是<strong>把客戶舊站（通常是 WordPress）內容搬過來</strong>，
+              手動 copy paste 就會把標題層級、圖片連結、SEO 設定全部弄亂。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li><strong>整站匯入精靈</strong>：貼網址 → Edge Function 抓全站 → 媒體自動下載入庫</li>
+              <li><strong>AI 一鍵 AEO 重排版</strong>：8 種產業 preset，用 tool_use API 把舊內容重排成結構化區塊</li>
+              <li><strong>內容版本備份</strong>（`content_versions`）：重排失敗可一鍵還原</li>
+              <li>自動 seed nav / breadcrumb / schema / canonical / sitemap / robots</li>
+              <li>實測：waterman-sports.com 匯入 <strong>31 pages + 1 post + 36 媒體</strong>，0 errors，45.8 秒</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">Edge Function</span>
+              <span class="tag hl">tool_use API</span>
+              <span class="tag">jsdom</span>
+              <span class="tag">schema.org JSON-LD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAIN 02 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">02</div>
+          <div class="pain-title">No-Code 內容編輯 + AI Agent 協助 FAQ / Schema 設定</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              WordPress 雖然 no-code 但每次改主題就跑版，TipTap / Notion 雖然好用但<strong>不是為 SEO/GEO 而生</strong>。
+              客戶寫好文章，FAQ 段落要自己想、Schema 要自己埋、內部連結要自己找——
+              真實情況是 90% 的客戶都不會做這件事。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li><strong>TipTap v2 編輯器</strong>+ shadcn/ui，所見即所得</li>
+              <li><strong>17 種區塊變體</strong>（Hero / Features / Pricing / FAQ / CTA / Article 等），下拉就能插入</li>
+              <li><strong>AI 助手</strong>：多模型生成草稿 + 改寫 + 縮排 + 翻譯</li>
+              <li><strong>即時 GEO 評分</strong>：寫到一半就告訴你哪段不夠結構化</li>
+              <li><strong>FAQ 建議 + 內部連結建議</strong>：AI 讀完內文後主動建議該補的問答</li>
+              <li>Schema.org JSON-LD 自動生成，客戶完全不用碰 code</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">TipTap v2</span>
+              <span class="tag hl">Claude Sonnet 4.6</span>
+              <span class="tag">shadcn/ui</span>
+              <span class="tag">RSC + Server Actions</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAIN 03 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">03</div>
+          <div class="pain-title">預約系統 — 為水上產業而設計，又能適配一般時段預約</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              我自家用了十年的 Pinpoint Booking 外掛，每年要付 $70 USD 還動不動跟 WordPress 升級打架。
+              更核心的問題是：<strong>水上產業要的是「資源池」邏輯</strong>
+              （SUP 板 / 獨木舟 / 教練 / 場地各自有上限），
+              不是「一個 slot 一個人」的醫療掛號邏輯。市面上沒有外掛同時支援兩種。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li><strong>Resource Pool 模型</strong>：可定義多種資源 + 並發上限，自動換算可預約量</li>
+              <li><strong>後台月曆 / 列表 / 看板</strong>三種視圖，業務一眼看完全月</li>
+              <li>動態定價（平假日 / 旺季 / 加購）+ 月份 sync + 數量 input</li>
+              <li>訂單狀態細分（pending / confirmed / paid / canceled / no-show / completed）</li>
+              <li>員工可線上編輯訂單，含改時間、改數量、退款、退課</li>
+              <li>客戶確認頁帶 magic link，省掉「我有沒有預約成功」客服問題</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">plugin-booking</span>
+              <span class="tag">Postgres RLS</span>
+              <span class="tag">resource pool</span>
+              <span class="tag">magic link</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAIN 04 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">04</div>
+          <div class="pain-title">排班系統 — 連動預約後台，員工自己上線排班</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              傳統排班是<strong>主管 Excel 排好再廣播</strong>，每改一次都要重發。
+              水上活動旺季又常常臨時加團，需要「<strong>誰能帶就上來認</strong>」的靈活模式，
+              但約聘教練不會想學一套複雜後台 just for 排班。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li>排班系統<strong>直接讀預約後台</strong>的訂單，自動列出需要人手的團</li>
+              <li><strong>員工自選團 / 候補名單</strong>：「我來帶」「我來助教」一鍵認領</li>
+              <li>權限細分：can_lead / can_assist / can_view_all / can_manage_groups</li>
+              <li>兼任「教練 + 管理員」的老闆視角也補上認領入口（dogfood 發現的洞）</li>
+              <li>候補名單系統，客滿時自動排隊、補位時自動通知</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">plugin-staffing</span>
+              <span class="tag">role-based access</span>
+              <span class="tag">候補佇列</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAIN 05 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">05</div>
+          <div class="pain-title">員工手機 Portal — PWA / RWD，跟 LINE 客服群組分開不混淆</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              過去訂單跟工作通知都丟在 LINE 客服群組，
+              <strong>客戶訊息跟內部交辦混在一起，常常漏接</strong>。
+              員工在海邊不可能隨身帶筆電，需要的是「手機打開就能查訂單、改時間、報到」的工具。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li><strong>獨立員工 portal 入口</strong>（`/staff/[tenantSlug]`），跟客戶 LINE 群完全分流</li>
+              <li>PWA + RWD：iPhone 加到主畫面就像 App</li>
+              <li>手機優先設計：訂單列表 / 排班表 / 客戶聯繫資訊一頁可達</li>
+              <li>QR 掃碼報到（客戶亮 QR、教練掃，3 秒 dedup 防誤觸）</li>
+              <li>idempotent 報到：已報到再掃不報錯，現場壓力減半</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">PWA</span>
+              <span class="tag hl">html5-qrcode</span>
+              <span class="tag">RWD mobile-first</span>
+              <span class="tag">idempotent API</span>
+            </div>
+          </div>
+
+          <div class="phone-grid">
+            <div class="phone-frame">
+              <img src="screenshots/phone-homepage.png" alt="員工 portal 首頁" loading="lazy">
+              <div class="phone-caption">員工 Portal 首頁</div>
+            </div>
+            <div class="phone-frame">
+              <img src="screenshots/phone-orders.png" alt="訂單列表" loading="lazy">
+              <div class="phone-caption">訂單列表（手機）</div>
+            </div>
+            <div class="phone-frame">
+              <img src="screenshots/phone-schedule.png" alt="排班表" loading="lazy">
+              <div class="phone-caption">排班 / 候補</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAIN 06 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">06</div>
+          <div class="pain-title">AI 客服 — 從簡易問答 → RAG 知識庫 → 對話內直接下單 → MCP 預留</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              一般 AI 客服只會聊天，<strong>客戶問完還要自己去網站下單</strong>，
+              80% 在這一步流失。同時知識庫要人工維護又會過時。
+              更前瞻的問題：以後 ChatGPT / Gemini 內建 connector 也能查我的網站，
+              現在不留接口，未來要重寫。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li><strong>三來源 RAG 知識庫</strong>：網站內容 + 預約系統服務 + 客戶對話紀錄</li>
+              <li>對話內出 <strong>booking confirm card</strong>，客戶直接在聊天框完成下單</li>
+              <li>對話 → 評分 → 自學習候選 → 入正式 KB（持續進化）</li>
+              <li>真人轉接：複雜問題自動 handoff 到 LINE 客服</li>
+              <li><strong>MCP Gateway</strong>：每個 tenant 自動有一個 MCP server，未來 ChatGPT / Claude / Gemini connector 接得上</li>
+              <li>外站 iframe widget：純 static HTML 也能掛這套客服（ai-cms.cc 自己就在用）</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">RAG</span>
+              <span class="tag hl">MCP</span>
+              <span class="tag hl">tool_use</span>
+              <span class="tag">iframe + postMessage</span>
+              <span class="tag">magic-link 2FA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAIN 07 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">07</div>
+          <div class="pain-title">上線設定一條龍 — Supabase / Cloudflare / Zeabur / GSC 通通自動化</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              每接一個新客戶要重跑：開 Supabase 專案、開 Cloudflare DNS、開 Zeabur service、
+              送 GSC 索引、設 OAuth、設 SMTP……<strong>光走完這套就要半天</strong>，還容易漏。
+              GSC 加 service account email 還會跳「找不到電子郵件」這種坑。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li>Super-admin 的 <strong>Settings 1-4</strong>：AI / DNS / OAuth / Zeabur 部署 全部後台化</li>
+              <li>每項設定都有「<strong>測試連線</strong>」+ 完整啟用步驟說明，新手也能跑完</li>
+              <li>GSC × Service Account 用 Site Verification API 繞道法（內建 runbook）</li>
+              <li>Tenant 啟用流程：domain 加入 → Zeabur deploy → GSC sitemap 提交 一條 SOP 走完</li>
+              <li>馬上要做的：DNS 驗證 → 一鍵部署精靈（Phase F.2）</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">Supabase</span>
+              <span class="tag hl">Cloudflare API</span>
+              <span class="tag hl">Zeabur API</span>
+              <span class="tag">GSC Site Verification</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAIN 08 -->
+      <div class="pain-card fade">
+        <div class="pain-head">
+          <div class="pain-num">08</div>
+          <div class="pain-title">內建 Analytics + 保留 GA4 — 看我自己想看的數據</div>
+        </div>
+        <div class="pain-body">
+          <div>
+            <div class="pain-col-title problem">痛點</div>
+            <p class="pain-text">
+              GA4 後台太複雜，<strong>我只想看「今天哪些頁、哪些縣市、哪些退出頁、IG 還是 FB 來的」</strong>，
+              而且要排除我自家 IP。另外有些客戶是 static 外站（不在 AICMS 裡跑）也想用同一套統計。
+            </p>
+          </div>
+          <div>
+            <div class="pain-col-title solution">AICMS 怎麼解</div>
+            <ul class="feature-list">
+              <li>內建 Analytics：per-tenant + super-admin 跨站總覽</li>
+              <li>關鍵維度都做：<strong>縣市 / 退出頁 / 即時 / IG vs FB UA 補位</strong></li>
+              <li>自家 IP 用 env 變數排除（不污染數據）</li>
+              <li><strong>外站 tracking</strong>：is_internal tenant + body tenant_slug + Origin 驗證，純 HTML 站也能用</li>
+              <li>保留 GA4 plug-in 並存，不強迫客戶二擇一</li>
+            </ul>
+            <div class="tech-tags">
+              <span class="tag hl">內建 Analytics</span>
+              <span class="tag hl">sendBeacon CORS</span>
+              <span class="tag">tenant 隔離</span>
+              <span class="tag">GA4 共存</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── GANTT ── -->
+<div class="divider"></div>
+<section class="s-white" id="gantt">
+  <div class="wrap">
+    <div class="eyebrow">開發甘特圖</div>
+    <h2 class="sec-title">一個月，4 週，11 條工作軸</h2>
+    <p class="sec-sub">每一條橫線都是一條真的有 commit / 有上 production 的工作軸。所有日期取自 AICMS PROGRESS.md。</p>
+
+    <div class="gantt-wrap">
+      <div class="gantt-head">
+        <div class="gantt-head-cell">工作軸</div>
+        <div class="gantt-head-cell">W1<span class="gantt-head-date">05/03–05/09</span></div>
+        <div class="gantt-head-cell">W2<span class="gantt-head-date">05/10–05/16</span></div>
+        <div class="gantt-head-cell">W3<span class="gantt-head-date">05/17–05/23</span></div>
+        <div class="gantt-head-cell">W4<span class="gantt-head-date">05/24–05/30</span></div>
+      </div>
+
+      <!-- 每條 row: 1 個 label + 4 個 cell + 1 條絕對定位 bar -->
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">⚙️</span>平台核心 / Monorepo</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar dark" style="left: 0.5%; width: 24%;">Next.js 15 + 多租戶</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">🎨</span>編輯器 + AI 助手</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar" style="left: 15%; width: 32%;">TipTap + GEO 評分</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">📥</span>整站匯入 + 重排版</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar" style="left: 28%; width: 28%;">waterman 演練 0 errors</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">💬</span>AI 客服</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar dark" style="left: 27%; width: 70%;">Phase 1 → booking tool → iframe widget</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">🔌</span>MCP Gateway</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar cyan" style="left: 30%; width: 14%;">8 booking tools 上線</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">📅</span>預約系統</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar" style="left: 28%; width: 44%;">resource pool + 員工編輯</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">👥</span>排班 + 候補</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar" style="left: 35%; width: 38%;">自選團 + 候補佇列</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">📱</span>員工 Portal</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar dark" style="left: 50%; width: 36%;">PWA + 報到 QR</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">📊</span>Analytics 內建/外站</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar cyan" style="left: 52%; width: 22%;">縣市/即時/外站</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">💳</span>金流外掛</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar" style="left: 78%; width: 14%;">ECPay + Paddle</div>
+        </div>
+      </div>
+
+      <div class="gantt-row">
+        <div class="gantt-label"><span class="gantt-label-icon">🌐</span>行銷站 / GSC</div>
+        <div class="gantt-cells">
+          <div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div>
+          <div class="gantt-bar cyan" style="left: 58%; width: 38%;">ai-cms.cc + 索引送出</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gantt-legend">
+      <span class="legend-item"><span class="legend-swatch dark"></span>核心平台</span>
+      <span class="legend-item"><span class="legend-swatch gold"></span>產品功能 / 外掛</span>
+      <span class="legend-item"><span class="legend-swatch cyan"></span>對外整合 / 基礎建設</span>
+    </div>
+
+    <h3 style="font-size:18px;font-weight:900;margin:40px 0 14px;">同期重要里程碑</h3>
+    <div class="milestones">
+      <div class="ms-card">
+        <div class="ms-date">2026-05-03</div>
+        <div class="ms-title">Phase 0a 啟動</div>
+        <div class="ms-text">Monorepo 拍板：Turborepo + pnpm，3 apps × 11 packages。技術鎖定 Next.js 15 + Supabase + TipTap + Biome。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-10</div>
+        <div class="ms-title">Phase 0a 全完成（v0.4.0-week4）</div>
+        <div class="ms-text">空 CMS 平台、編輯器、AI 助手、GEO 評分、Settings 1-4、整站匯入 wizard 端到端跑通。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-11</div>
+        <div class="ms-title">AI 客服外掛 Phase 1 全綠</div>
+        <div class="ms-text">RAG + 引導下單 + LINE handoff + 完整後台。waterman dogfood 一輪。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-12</div>
+        <div class="ms-title">MCP Gateway 上線</div>
+        <div class="ms-text">agent-native CMS 架構成形。每個 tenant 自動有 MCP server，8 個 booking tool + magic-link 雙因素。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-13</div>
+        <div class="ms-title">對話內直接下單</div>
+        <div class="ms-text">ai-chat 接 booking tool use，站內 widget 即時查預約系統 + 對話內出 confirm card 完成下單。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-19</div>
+        <div class="ms-title">月曆 SSR 預抓 + GSC 串接</div>
+        <div class="ms-text">Booking 首屏效能優化、GSC × Service Account onboarding runbook 沉澱進 repo。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-21</div>
+        <div class="ms-title">ai-cms.cc 行銷站上線</div>
+        <div class="ms-text">Cloudflare DNS + Zeabur 部署，跟 AICMS 主 repo 分開維護（public 行銷頁）。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-22</div>
+        <div class="ms-title">內建 Analytics 全平台上線</div>
+        <div class="ms-text">取代 GA4 用：per-tenant + super-admin 跨站 + 外站 tracking 三模式。ai-cms.cc 首發用。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-26</div>
+        <div class="ms-title">金流外掛上線</div>
+        <div class="ms-text">ECPay + Paddle 雙 provider adapter，AES 加密 credentials，24h 過期自動取消轉 LINE。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-27</div>
+        <div class="ms-title">報到 QR + 教練 portal</div>
+        <div class="ms-text">客戶亮 QR、教練 html5-qrcode 掃描，idempotent 報到。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">2026-05-28</div>
+        <div class="ms-title">外站 iframe widget</div>
+        <div class="ms-text">純 static HTML 站也能掛 AICMS AI 客服浮窗，ai-cms.cc 自己跑通 dogfood。</div>
+      </div>
+      <div class="ms-card">
+        <div class="ms-date">— 接下來</div>
+        <div class="ms-title">DNS 一鍵部署 + 接 CitableRank</div>
+        <div class="ms-text">Phase F.2 DNS 流程、Phase 1 外掛延伸（電商 / AI 貼文助手強化）、接 CitableRank API。</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CLOSING ── -->
+<div class="divider"></div>
+<section class="s-black">
+  <div class="wrap">
+    <div class="closing-card">
+      <div class="closing-h">想看牧場長什麼樣？</div>
+      <div class="closing-p">AICMS 行銷站正在用自己 dogfood——AI 客服、Analytics、ISR、整站結構全部跑在 AICMS 上面。<br>網站開頭右下角的浮窗，就是 06 號痛點裡那套外站 iframe widget。</div>
+      <a class="closing-link" href="https://ai-cms.cc" target="_blank" rel="noopener">前往 ai-cms.cc →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="pgfoot">
+  <div class="wrap">
+    陳建文（Rai）· <a href="mailto:rai0603@gmail.com">rai0603@gmail.com</a> · <a href="https://waterman-sports.com" target="_blank" rel="noopener">waterman-sports.com</a> · <a href="../">回到開發筆記首頁</a>
+  </div>
+</footer>
+
+<script>
+  // Fade-in on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
