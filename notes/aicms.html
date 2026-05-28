@@ -166,6 +166,33 @@
   .pain-placeholder-icon { font-size: 28px; margin-bottom: 6px; }
   .pain-placeholder-text { font-family: var(--mono); font-size: 11px; color: var(--gray); letter-spacing: 0.05em; }
 
+  /* ── Shot grid (實機截圖) ── */
+  .shot-grid { grid-column: 1 / -1; margin-top: 14px; display: grid; gap: 12px; }
+  .shot-grid.cols-1 { grid-template-columns: 1fr; }
+  .shot-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .shot-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .shot-frame { border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--white); cursor: zoom-in; transition: transform 0.2s, box-shadow 0.2s; }
+  .shot-frame:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+  .shot-frame img { width: 100%; display: block; aspect-ratio: 16 / 10; object-fit: cover; object-position: top center; background: var(--gray-light); }
+  .shot-frame.tall img { aspect-ratio: 4 / 5; object-position: top center; }
+  .shot-caption { font-family: var(--mono); font-size: 11px; color: var(--gray); padding: 7px 10px; background: var(--gray-light); border-top: 1px solid var(--border); text-align: center; line-height: 1.4; }
+  .shot-pii { font-size: 9px; color: var(--gray-mid); font-style: italic; }
+  @media (max-width: 720px) {
+    .shot-grid.cols-2, .shot-grid.cols-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── Bonus banner ── */
+  .bonus-banner { border: 2px solid var(--gold-border); border-radius: 12px; overflow: hidden; background: var(--gold-light); margin-bottom: 24px; }
+  .bonus-label { padding: 12px 20px; background: var(--gold); font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.15em; color: var(--black); border-bottom: 1.5px solid var(--gold-border); }
+  .bonus-img { display: block; width: 100%; cursor: zoom-in; }
+
+  /* ── Lightbox ── */
+  .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.88); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 24px; cursor: zoom-out; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .lightbox-close { position: absolute; top: 16px; right: 20px; color: #fff; font-size: 28px; font-weight: 300; cursor: pointer; line-height: 1; opacity: 0.7; }
+  .lightbox-close:hover { opacity: 1; }
+
   .phone-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 8px; }
   .phone-frame { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--white); }
   .phone-frame img { width: 100%; display: block; }
@@ -388,6 +415,16 @@
               <span class="tag">schema.org JSON-LD</span>
             </div>
           </div>
+          <div class="shot-grid cols-2">
+            <div class="shot-frame" data-zoom="screenshots/p1-media.png">
+              <img src="screenshots/p1-media.png" alt="媒體庫匯入結果" loading="lazy">
+              <div class="shot-caption">媒體庫：waterman 整站匯入 60 張圖片</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p1-nav.png">
+              <img src="screenshots/p1-nav.png" alt="選單結構編輯" loading="lazy">
+              <div class="shot-caption">匯入後 nav 結構自動 seed，可拖曳調整</div>
+            </div>
+          </div>
           <div class="pain-foot">
             <span class="pain-foot-label">了解更多</span>
             <a href="https://ai-cms.cc/wordpress-import.html" target="_blank" rel="noopener">WordPress 一鍵匯入 <span class="arrow">→</span></a>
@@ -426,6 +463,20 @@
               <span class="tag hl">Claude Sonnet 4.6</span>
               <span class="tag">shadcn/ui</span>
               <span class="tag">RSC + Server Actions</span>
+            </div>
+          </div>
+          <div class="shot-grid cols-3">
+            <div class="shot-frame" data-zoom="screenshots/p2-editor.png">
+              <img src="screenshots/p2-editor.png" alt="TipTap 編輯器 + GEO 評分 + AI 一鍵生成" loading="lazy">
+              <div class="shot-caption">TipTap 編輯器：右側 GEO 評分 + AI 一鍵生成 SEO Title</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p2-faq.png">
+              <img src="screenshots/p2-faq.png" alt="FAQ + 內部連結建議" loading="lazy">
+              <div class="shot-caption">FAQ 編輯 + 內部連結建議自動掃描</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p2-hero.png">
+              <img src="screenshots/p2-hero.png" alt="Hero 區塊編輯" loading="lazy">
+              <div class="shot-caption">17 種區塊變體，Hero 直接填表單就出結構</div>
             </div>
           </div>
           <div class="pain-foot">
@@ -468,6 +519,16 @@
               <span class="tag">magic link</span>
             </div>
           </div>
+          <div class="shot-grid cols-2">
+            <div class="shot-frame" data-zoom="screenshots/p3-orders.png">
+              <img src="screenshots/p3-orders.png" alt="訂單管理（客戶 PII 已模糊）" loading="lazy">
+              <div class="shot-caption">訂單管理：狀態切換 / 容量同步 <span class="shot-pii">· 客戶資料已模糊</span></div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p3-group.png">
+              <img src="screenshots/p3-group.png" alt="散客團詳情（客戶 PII 已模糊）" loading="lazy">
+              <div class="shot-caption">散客團詳情：合併同日團 + 教練分派 <span class="shot-pii">· 教練/客戶名稱已模糊</span></div>
+            </div>
+          </div>
           <div class="pain-foot">
             <span class="pain-foot-label">了解更多</span>
             <a href="https://ai-cms.cc/solution.html" target="_blank" rel="noopener">整合方案（預約段落）<span class="arrow">→</span></a>
@@ -503,6 +564,16 @@
               <span class="tag hl">plugin-staffing</span>
               <span class="tag">role-based access</span>
               <span class="tag">候補佇列</span>
+            </div>
+          </div>
+          <div class="shot-grid cols-2">
+            <div class="shot-frame" data-zoom="screenshots/p4-schedule.png">
+              <img src="screenshots/p4-schedule.png" alt="排班週視圖" loading="lazy">
+              <div class="shot-caption">排班週視圖：點 cell 分派帶隊+助教，系統檢查衝突</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p4-coaches.png">
+              <img src="screenshots/p4-coaches.png" alt="教練名單（PII 已模糊）" loading="lazy">
+              <div class="shot-caption">教練名單：代號/權限/portal 登入 <span class="shot-pii">· 姓名/email/電話已模糊</span></div>
             </div>
           </div>
           <div class="pain-foot">
@@ -599,6 +670,24 @@
               <span class="tag">magic-link 2FA</span>
             </div>
           </div>
+          <div class="shot-grid cols-2">
+            <div class="shot-frame" data-zoom="screenshots/p6-kb.png">
+              <img src="screenshots/p6-kb.png" alt="AI 客服知識庫" loading="lazy">
+              <div class="shot-caption">知識庫：84 條知識（自動/手動），含同義詞 + 自學習</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p6-persona.png">
+              <img src="screenshots/p6-persona.png" alt="AI 客服 persona 設定" loading="lazy">
+              <div class="shot-caption">角色定義 + 從外站 URL 自動生成 KB</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p6-security.png">
+              <img src="screenshots/p6-security.png" alt="AI 客服安全設定" loading="lazy">
+              <div class="shot-caption">模型選 / IP 速率限制 / Honeypot / 人為訊號偵測</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p6-mcp.png">
+              <img src="screenshots/p6-mcp.png" alt="MCP Gateway 設定" loading="lazy">
+              <div class="shot-caption">MCP Gateway：讓 Claude / ChatGPT / Gemini 直接連</div>
+            </div>
+          </div>
           <div class="pain-foot">
             <span class="pain-foot-label">了解更多</span>
             <a href="https://ai-cms.cc/ai-chat-booking.html" target="_blank" rel="noopener">對話即下單 <span class="arrow">→</span></a>
@@ -638,6 +727,12 @@
               <span class="tag">GSC Site Verification</span>
             </div>
           </div>
+          <div class="shot-grid cols-1">
+            <div class="shot-frame" data-zoom="screenshots/p7-checklist.png">
+              <img src="screenshots/p7-checklist.png" alt="上線前 GEO/AEO 自檢" loading="lazy">
+              <div class="shot-caption">上線前 GEO/AEO 自檢：robots.txt / llms.txt / sitemap / Schema / Hero 主 CTA 一頁打鉤</div>
+            </div>
+          </div>
           <div class="pain-foot">
             <span class="pain-foot-label">了解更多</span>
             <a href="https://ai-cms.cc/solution.html" target="_blank" rel="noopener">整合方案（一條龍上線）<span class="arrow">→</span></a>
@@ -673,6 +768,20 @@
               <span class="tag hl">sendBeacon CORS</span>
               <span class="tag">tenant 隔離</span>
               <span class="tag">GA4 共存</span>
+            </div>
+          </div>
+          <div class="shot-grid cols-3">
+            <div class="shot-frame" data-zoom="screenshots/p8-overview.png">
+              <img src="screenshots/p8-overview.png" alt="Analytics 7 天總覽" loading="lazy">
+              <div class="shot-caption">7 天總覽：PV / 獨立訪客 / 流量來源 / 訪客國家</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p8-realtime.png">
+              <img src="screenshots/p8-realtime.png" alt="Analytics 即時 + 每小時" loading="lazy">
+              <div class="shot-caption">即時在線 + 每小時瀏覽 + IG/FB/Google 來源分流</div>
+            </div>
+            <div class="shot-frame" data-zoom="screenshots/p8-detail.png">
+              <img src="screenshots/p8-detail.png" alt="Analytics 裝置 / 縣市 / 退出頁" loading="lazy">
+              <div class="shot-caption">裝置 / 作業系統 / 台灣縣市 Top 10 / 入口 / 退出頁</div>
             </div>
           </div>
           <div class="pain-foot">
@@ -866,6 +975,20 @@
   </div>
 </section>
 
+<!-- ── BONUS: PLUGINS ── -->
+<div class="divider"></div>
+<section class="s-white">
+  <div class="wrap">
+    <div class="eyebrow">牧場全景</div>
+    <h2 class="sec-title">外掛市集 — 一個一個牲口長出來</h2>
+    <p class="sec-sub">每一個痛點對應一個外掛。客戶在後台「外掛市集」勾要用哪些，平台一條龍同時開可拆可換的能力。</p>
+    <div class="bonus-banner">
+      <div class="bonus-label">SUPER ADMIN · 外掛市集 ｜ 線上預約 · 排班 · AI Agent Connector · 門診掛號 · AI 客服 · 金流</div>
+      <img class="bonus-img" src="screenshots/bonus-plugins.png" alt="AICMS 外掛市集" loading="lazy" data-zoom="screenshots/bonus-plugins.png">
+    </div>
+  </div>
+</section>
+
 <!-- ── CLOSING ── -->
 <div class="divider"></div>
 <section class="s-black">
@@ -884,12 +1007,30 @@
   </div>
 </footer>
 
+<!-- ── Lightbox ── -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close">×</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <script>
   // Fade-in on scroll
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.12 });
   document.querySelectorAll('.fade').forEach(el => io.observe(el));
+
+  // Lightbox for screenshots
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  document.querySelectorAll('[data-zoom]').forEach(el => {
+    el.addEventListener('click', () => {
+      lbImg.src = el.getAttribute('data-zoom');
+      lb.classList.add('open');
+    });
+  });
+  lb.addEventListener('click', () => { lb.classList.remove('open'); lbImg.src = ''; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') lb.classList.remove('open'); });
 </script>
 
 </body>
